@@ -1,0 +1,117 @@
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+
+fn check_portable_mode() {
+    if let Ok(exe) = std::env::current_exe() {
+        if let Some(dir) = exe.parent() {
+            if dir.join("portable.txt").exists() || dir.join(".portable").exists() {
+                let data_dir = dir.join("data");
+                let _ = std::fs::create_dir_all(&data_dir);
+                std::env::set_var("OMNIGET_PORTABLE", "1");
+                std::env::set_var("OMNIGET_DATA_DIR", data_dir.to_string_lossy().to_string());
+
+                #[cfg(windows)]
+                if std::env::var("WEBVIEW2_USER_DATA_FOLDER").is_err() {
+                    let webview_dir = data_dir.join("webview");
+                    let _ = std::fs::create_dir_all(&webview_dir);
+                    std::env::set_var(
+                        "WEBVIEW2_USER_DATA_FOLDER",
+                        webview_dir.to_string_lossy().to_string(),
+                    );
+                }
+
+                // Older versions resolved the settings store against Tauri's
+                // own AppData dir, so portable users' settings landed in the
+                // OS profile. Adopt that file once if the portable dir has none.
+                let portable_settings = data_dir.join("settings.json");
+                if !portable_settings.exists() {
+                    if let Some(os_settings) = dirs::data_dir()
+                        .map(|d| d.join("local.omniget.personal").join("settings.json"))
+                        .filter(|p| p.exists())
+                    {
+                        let _ = std::fs::copy(&os_settings, &portable_settings);
+                    }
+                }
+            }
+        }
+    }
+}
+
+fn setup_environment() {
+    // Keep this personal build and its native plugins in a separate data store.
+    // Set the process environment before workers or plugin libraries start.
+    if std::env::var_os("OMNIGET_DATA_DIR").is_none() {
+        if let Some(base) = dirs::data_dir() {
+            let personal_dir = base.join("local.omniget.personal");
+            std::fs::create_dir_all(&personal_dir)
+                .expect("Unable to create OmniGet Personal's private data folder");
+            #[cfg(unix)]
+            {
+                use std::os::unix::fs::PermissionsExt;
+                std::fs::set_permissions(&personal_dir, std::fs::Permissions::from_mode(0o700))
+                    .expect("Unable to protect OmniGet Personal's private data folder");
+            }
+            std::env::set_var("OMNIGET_DATA_DIR", personal_dir);
+        }
+    }
+    std::env::remove_var("PYTHONHOME");
+    std::env::remove_var("PYTHONPATH");
+
+    if let Some(bin_dir) = omniget_lib::core::paths::app_data_dir().map(|d| d.join("bin")) {
+        let sep = if cfg!(windows) { ";" } else { ":" };
+        let current = std::env::var("PATH").unwrap_or_default();
+        std::env::set_var("PATH", format!("{}{}{}", bin_dir.display(), sep, current));
+    }
+
+    std::env::set_var("PYTHONIOENCODING", "utf-8");
+    std::env::set_var("PYTHONUTF8", "1");
+    std::env::set_var("PYTHONLEGACYWINDOWSSTDIO", "0");
+
+    #[cfg(target_os = "linux")]
+    if std::env::var("WEBKIT_DISABLE_DMABUF_RENDERER").is_err() {
+        std::env::set_var("WEBKIT_DISABLE_DMABUF_RENDERER", "1");
+    }
+
+    // Issue #199. AppImages bundle their own libwayland, which conflicts with
+    // the system EGL on some Wayland setups (Fedora/KDE, Intel+Mesa) and kills
+    // the WebKit process with EGL_BAD_PARAMETER before any window appears
+    // (tauri-apps/tauri#11988). Running through XWayland sidesteps the bundled
+    // library entirely. Only applies inside an AppImage on a Wayland session,
+    // and never overrides an explicit user choice.
+    #[cfg(target_os = "linux")]
+    if std::env::var_os("APPIMAGE").is_some()
+        && std::env::var_os("GDK_BACKEND").is_none()
+        && std::env::var("XDG_SESSION_TYPE").as_deref() == Ok("wayland")
+    {
+        std::env::set_var("GDK_BACKEND", "x11");
+    }
+}
+
+/// Usa um WebView2 Fixed Version Runtime descompactado ao lado do executavel.
+///
+/// Issue #218. O Tauri so define `WEBVIEW2_BROWSER_EXECUTABLE_FOLDER` quando o
+/// bundle e compilado em modo `fixedRuntime` (`app.rs`), e nunca a limpa — entao
+/// definir aqui funciona, ao contrario do `WEBVIEW2_USER_DATA_FOLDER`, que o
+/// Tauri sobrescrevia (ver `core/portable.rs`). Nao mexe se o usuario ja definiu.
+#[cfg(windows)]
+fn check_fixed_webview_runtime() {
+    if std::env::var_os("WEBVIEW2_BROWSER_EXECUTABLE_FOLDER").is_some() {
+        return;
+    }
+    let Some(dir) = std::env::current_exe()
+        .ok()
+        .and_then(|e| e.parent().map(|p| p.to_path_buf()))
+    else {
+        return;
+    };
+    if let Some(runtime) = omniget_lib::core::portable::find_fixed_runtime(&dir) {
+        std::env::set_var("WEBVIEW2_BROWSER_EXECUTABLE_FOLDER", &runtime);
+    }
+}
+
+fn main() {
+    check_portable_mode();
+    #[cfg(windows)]
+    check_fixed_webview_runtime();
+    setup_environment();
+    omniget_lib::run()
+}

@@ -1,0 +1,82 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "OmniGet Personal",
+  "version": "0.9.2",
+  "identifier": "local.omniget.personal",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../build"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "create": false,
+        "title": "OmniGet Personal",
+        "width": 1100,
+        "height": 720,
+        "minWidth": 800,
+        "minHeight": 560,
+        "titleBarStyle": "Overlay",
+        "hiddenTitle": true,
+        "backgroundColor": "#1C1C1E"
+      }
+    ],
+    "security": {
+      "csp": null,
+      "assetProtocol": {
+        "enable": true,
+        "scope": {
+          "allow": [
+            "**"
+          ],
+          "deny": [],
+          "requireLiteralLeadingDot": false
+        }
+      }
+    },
+    "macOSPrivateApi": true
+  },
+  "plugins": {
+    "deep-link": {
+      "desktop": {
+        "schemes": [
+          "omniget-personal"
+        ]
+      }
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "createUpdaterArtifacts": false,
+    "resources": {
+      "../browser-extension/chrome/": "browser-extension/chrome/",
+      "../browser-extension/firefox/": "browser-extension/firefox/"
+    },
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "macOS": {
+      "entitlements": "Entitlements.plist",
+      "minimumSystemVersion": "10.15"
+    },
+    "linux": {
+      "deb": {
+        "depends": [
+          "libasound2"
+        ],
+        "desktopTemplate": "./desktop.template"
+      },
+      "rpm": {
+        "desktopTemplate": "./desktop.template"
+      }
+    }
+  }
+}
