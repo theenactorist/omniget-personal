@@ -86,7 +86,7 @@ type DependencyStatus = {
 
 export async function exportDiagnostics(): Promise<string> {
   const lines: string[] = [];
-  lines.push("--- OmniGet Diagnostic Report ---");
+  lines.push("--- Origo Downloads Diagnostic Report ---");
 
   try {
     const appVersion = await getVersion();

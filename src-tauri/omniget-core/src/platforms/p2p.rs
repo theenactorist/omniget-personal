@@ -20,6 +20,7 @@ fn relay_addr() -> String {
 }
 
 async fn connect_relay() -> anyhow::Result<TcpStream> {
+    crate::core::personal_policy::require_p2p().map_err(anyhow::Error::msg)?;
     let addr = relay_addr();
     let stream = tokio::time::timeout(
         std::time::Duration::from_secs(10),
@@ -64,6 +65,9 @@ impl PlatformDownloader for P2pDownloader {
     }
 
     fn can_handle(&self, url: &str) -> bool {
+        if crate::core::personal_policy::require_p2p().is_err() {
+            return false;
+        }
         if let Some(code) = url.strip_prefix("p2p:") {
             return super::p2p_words::is_valid_code(code);
         }
@@ -71,6 +75,7 @@ impl PlatformDownloader for P2pDownloader {
     }
 
     async fn get_media_info(&self, url: &str) -> anyhow::Result<MediaInfo> {
+        crate::core::personal_policy::require_p2p().map_err(anyhow::Error::msg)?;
         let code = url
             .strip_prefix("p2p:")
             .ok_or_else(|| anyhow!("Invalid P2P URL: {}", url))?;
@@ -105,6 +110,7 @@ impl PlatformDownloader for P2pDownloader {
         opts: &DownloadOptions,
         progress: mpsc::Sender<ProgressUpdate>,
     ) -> anyhow::Result<DownloadResult> {
+        crate::core::personal_policy::require_p2p().map_err(anyhow::Error::msg)?;
         let url = match info.available_qualities.first() {
             Some(q) => &q.url,
             None => anyhow::bail!("No URL found in MediaInfo"),
@@ -211,6 +217,7 @@ pub async fn start_send(
     file_path: PathBuf,
     cancel_token: CancellationToken,
 ) -> anyhow::Result<P2pSendSession> {
+    crate::core::personal_policy::require_p2p().map_err(anyhow::Error::msg)?;
     let metadata = tokio::fs::metadata(&file_path)
         .await
         .map_err(|e| anyhow!("File not found: {}", e))?;

@@ -91,9 +91,6 @@
   import PinKeywordsTool from "$components/tools/pinterest/PinKeywordsTool.svelte";
   import TwEmotesTool from "$components/tools/twitch/EmotesTool.svelte";
   import TwChatReplayTool from "$components/tools/twitch/ChatReplayTool.svelte";
-  import MusicPlaylistTool from "$components/tools/music/PlaylistTool.svelte";
-  import LyricsTool from "$components/tools/music/LyricsTool.svelte";
-  import MusicHistoryTool from "$components/tools/music/HistoryTool.svelte";
   import RdDownloadTool from "$components/tools/reddit/RdDownloadTool.svelte";
   import RdThreadTool from "$components/tools/reddit/RdThreadTool.svelte";
   import RdGdprTool from "$components/tools/reddit/RdGdprTool.svelte";
@@ -217,9 +214,6 @@
     "pin-keywords": PinKeywordsTool,
     "tw-emotes": TwEmotesTool,
     "tw-chat": TwChatReplayTool,
-    "music-playlist": MusicPlaylistTool,
-    "music-lyrics": LyricsTool,
-    "music-history": MusicHistoryTool,
     "rd-download": RdDownloadTool,
     "rd-thread": RdThreadTool,
     "rd-gdpr": RdGdprTool,

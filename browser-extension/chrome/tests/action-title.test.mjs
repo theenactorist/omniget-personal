@@ -5,10 +5,10 @@ import { resolveActionTitle } from "../src/action-title.js";
 
 test("uses localized title for supported pages", () => {
   const title = resolveActionTitle(true, (key) =>
-    key === "action_title_supported" ? "Envoyer cette page multimedia vers OmniGet Personal" : ""
+    key === "action_title_supported" ? "Envoyer cette page multimedia vers Origo Downloads" : ""
   );
 
-  assert.equal(title, "Envoyer cette page multimedia vers OmniGet Personal");
+  assert.equal(title, "Envoyer cette page multimedia vers Origo Downloads");
 });
 
 test("uses localized title for unsupported pages", () => {
@@ -20,6 +20,6 @@ test("uses localized title for unsupported pages", () => {
 });
 
 test("falls back to English when a locale key is missing", () => {
-  assert.equal(resolveActionTitle(true, () => ""), "Send this media page to OmniGet Personal");
+  assert.equal(resolveActionTitle(true, () => ""), "Send this media page to Origo Downloads");
   assert.equal(resolveActionTitle(false, () => ""), "No supported media detected on this page");
 });

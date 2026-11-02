@@ -1,22 +1,22 @@
 const ERROR_PAGE_MESSAGES = Object.freeze({
-  error_page_document_title: "OmniGet Personal Extension",
-  error_page_eyebrow: "OmniGet Personal Extension",
-  error_page_install_cta: "Install OmniGet Personal",
+  error_page_document_title: "Origo Downloads Extension",
+  error_page_eyebrow: "Origo Downloads Extension",
+  error_page_install_cta: "Install Origo Downloads",
   error_page_open_extensions: "Open extension settings",
-  error_host_missing_title: "Open OmniGet Personal once to finish setup",
-  error_host_missing_body: "Your browser could not find the OmniGet Personal bridge on this computer yet.",
+  error_host_missing_title: "Open Origo Downloads once to finish setup",
+  error_host_missing_body: "Your browser could not find the Origo Downloads bridge on this computer yet.",
   error_host_missing_detail:
-    "Install OmniGet Personal if needed, then launch the desktop app once and click the extension again.",
-  error_invalid_url_title: "This page URL cannot be sent to OmniGet Personal",
+    "Install Origo Downloads if needed, then launch the desktop app once and click the extension again.",
+  error_invalid_url_title: "This page URL cannot be sent to Origo Downloads",
   error_invalid_url_body:
-    "The current page is not a supported media page for the OmniGet Personal extension.",
+    "The current page is not a supported media page for the Origo Downloads extension.",
   error_invalid_url_detail:
     "Try again from a direct video, reel, post, playlist, or course page.",
-  error_launch_failed_title: "OmniGet Personal could not be launched from your browser",
+  error_launch_failed_title: "Origo Downloads could not be launched from your browser",
   error_launch_failed_body:
     "The extension talked to the native host, but the desktop app did not start correctly.",
   error_launch_failed_detail:
-    "Check that OmniGet Personal is installed and not blocked by your system, then try again.",
+    "Check that Origo Downloads is installed and not blocked by your system, then try again.",
 });
 
 const ERROR_CODES = Object.freeze({

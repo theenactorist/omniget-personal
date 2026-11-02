@@ -73,6 +73,10 @@ fn disconnect_locked(state: &mut RpcState) {
 }
 
 fn ensure_connected_with(app_id: &str) -> bool {
+    if omniget_core::core::personal_policy::require_discord_rpc().is_err() {
+        return false;
+    }
+
     let mut state = match RPC.lock() {
         Ok(g) => g,
         Err(_) => return false,
@@ -289,6 +293,8 @@ fn apply_top_activity(default_image: &str) -> bool {
 }
 
 pub async fn test_connection(settings: RpcSettings) -> Result<Value, String> {
+    omniget_core::core::personal_policy::require_discord_rpc()?;
+
     if settings.app_id.is_empty() {
         return Ok(json!({ "ok": false, "reason": "missing_app_id" }));
     }
@@ -338,6 +344,8 @@ pub async fn set_presence_source(
     paused: bool,
     large_image_key: Option<String>,
 ) -> Result<Value, String> {
+    omniget_core::core::personal_policy::require_discord_rpc()?;
+
     if !settings.enabled || settings.app_id.is_empty() {
         let _ = tokio::task::spawn_blocking(|| {
             if let Ok(mut s) = RPC.lock() {
@@ -387,6 +395,8 @@ pub async fn set_presence_source(
 }
 
 pub async fn clear_source(settings: RpcSettings, source: String) -> Result<Value, String> {
+    omniget_core::core::personal_policy::require_discord_rpc()?;
+
     let default_img = settings.large_image_key.clone();
     let app_id = settings.app_id.clone();
     let enabled = settings.enabled;
@@ -416,6 +426,8 @@ pub async fn set_idle_stats(
     downloads_count: u64,
     total_bytes: u64,
 ) -> Result<Value, String> {
+    omniget_core::core::personal_policy::require_discord_rpc()?;
+
     if !settings.enabled || settings.app_id.is_empty() {
         return Ok(json!({ "ok": false, "reason": "disabled" }));
     }
@@ -439,6 +451,10 @@ pub async fn set_idle_stats(
 }
 
 pub async fn handle_settings_changed(new_settings: RpcSettings, previous_app_id: String) {
+    if omniget_core::core::personal_policy::require_discord_rpc().is_err() {
+        return;
+    }
+
     let id_changed = previous_app_id != new_settings.app_id;
     let disabled = !new_settings.enabled || new_settings.app_id.is_empty();
     if id_changed || disabled {

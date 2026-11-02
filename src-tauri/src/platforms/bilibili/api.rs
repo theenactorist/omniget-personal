@@ -249,6 +249,10 @@ impl ApiClient {
     }
 
     pub async fn resolve_redirect(&self, url: &str) -> Result<String> {
+        if !omniget_core::core::personal_policy::url_enabled(url) {
+            return Err(BilibiliError::ContentUnavailable);
+        }
+
         let no_follow = crate::core::http_client::apply_global_proxy(
             Client::builder()
                 .timeout(Duration::from_secs(REQUEST_TIMEOUT_SECS))
@@ -264,6 +268,9 @@ impl ApiClient {
             .map_err(BilibiliError::Network)?;
         if let Some(loc) = resp.headers().get(reqwest::header::LOCATION) {
             if let Ok(s) = loc.to_str() {
+                if !omniget_core::core::personal_policy::url_enabled(s) {
+                    return Err(BilibiliError::ContentUnavailable);
+                }
                 return Ok(s.to_string());
             }
         }

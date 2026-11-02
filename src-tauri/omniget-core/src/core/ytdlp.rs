@@ -2231,6 +2231,8 @@ pub async fn get_video_info(
     url: &str,
     extra_flags: &[String],
 ) -> anyhow::Result<serde_json::Value> {
+    crate::core::personal_policy::require_url(url).map_err(anyhow::Error::msg)?;
+
     let _timer_start = std::time::Instant::now();
 
     if is_youtube_url(url) {
@@ -2527,6 +2529,8 @@ pub async fn get_playlist_info(
     url: &str,
     extra_flags: &[String],
 ) -> anyhow::Result<(String, Vec<PlaylistEntry>)> {
+    crate::core::personal_policy::require_url(url).map_err(anyhow::Error::msg)?;
+
     if is_youtube_url(url) {
         yt_rate_limiter().acquire().await;
     }
@@ -2714,6 +2718,8 @@ pub async fn get_playlist_info_incremental(
     extractor_prefix: &str,
     playlist_end: u32,
 ) -> anyhow::Result<(String, Vec<PlaylistEntry>)> {
+    crate::core::personal_policy::require_url(url).map_err(anyhow::Error::msg)?;
+
     if is_youtube_url(url) {
         yt_rate_limiter().acquire().await;
     }
@@ -2883,6 +2889,8 @@ pub async fn download_video(
     extra_flags: &[String],
     audio_format: Option<&str>,
 ) -> anyhow::Result<DownloadResult> {
+    crate::core::personal_policy::require_url(url).map_err(anyhow::Error::msg)?;
+
     let _timer_start = std::time::Instant::now();
 
     if is_youtube_url(url) {

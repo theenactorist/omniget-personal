@@ -43,12 +43,12 @@ fn setup_environment() {
         if let Some(base) = dirs::data_dir() {
             let personal_dir = base.join("local.omniget.personal");
             std::fs::create_dir_all(&personal_dir)
-                .expect("Unable to create OmniGet Personal's private data folder");
+                .expect("Unable to create Origo Downloads's private data folder");
             #[cfg(unix)]
             {
                 use std::os::unix::fs::PermissionsExt;
                 std::fs::set_permissions(&personal_dir, std::fs::Permissions::from_mode(0o700))
-                    .expect("Unable to protect OmniGet Personal's private data folder");
+                    .expect("Unable to protect Origo Downloads's private data folder");
             }
             std::env::set_var("OMNIGET_DATA_DIR", personal_dir);
         }

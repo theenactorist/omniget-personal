@@ -3,8 +3,6 @@ use std::path::{Path, PathBuf};
 use serde::Serialize;
 use tauri::{AppHandle, Manager};
 
-const FIREFOX_STORE_URL: &str = "https://addons.mozilla.org/firefox/addon/omniget/";
-
 #[derive(Debug, Clone, Serialize)]
 pub struct BrowserExtensionStatus {
     pub browser: String,
@@ -63,8 +61,7 @@ pub async fn browser_extension_status(
     // is the bare `omniget.exe` with no `resources/` folder beside it, so the
     // export copied nothing and still reported a path — the user opened an
     // empty folder and had no idea why (issue #310). Ask the bundle whether the
-    // extension is actually there; when it is not, the UI falls back to the
-    // store link.
+    // extension is actually there; when it is not, the personal build offers only its bundled local export.
     let chrome_v = read_bundled_manifest_version(&app, "chrome");
     let firefox_v = read_bundled_manifest_version(&app, "firefox");
     Ok(vec![
@@ -82,7 +79,7 @@ pub async fn browser_extension_status(
             installable: firefox_v.is_some(),
             bundled_version: firefox_v,
             install_hint_key: "firefox".into(),
-            store_url: Some(FIREFOX_STORE_URL.into()),
+            store_url: None,
         },
         BrowserExtensionStatus {
             browser: "safari".into(),
@@ -117,7 +114,7 @@ pub async fn browser_extension_export(
         .map_err(|e| format!("resolve resource: {}", e))?;
     if !src.exists() {
         return Err(format!(
-            "This build does not ship the {} extension files (the Windows portable .exe carries no resources folder). Install it from the store instead.",
+            "This build does not ship the {} extension files. Use the local extension bundle supplied with this personal app.",
             browser
         ));
     }

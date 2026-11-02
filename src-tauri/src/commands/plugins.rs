@@ -141,6 +141,8 @@ pub fn get_plugin_frontend_path(
     state: tauri::State<'_, Arc<tokio::sync::RwLock<PluginManager>>>,
     plugin_id: String,
 ) -> Result<String, String> {
+    omniget_core::core::personal_policy::require_native_plugins()?;
+
     let manager = state.blocking_read();
     let frontend_dir = manager
         .plugin_dir(&plugin_id)
@@ -159,6 +161,8 @@ pub fn set_plugin_enabled(
     plugin_id: String,
     enabled: bool,
 ) -> Result<(), String> {
+    omniget_core::core::personal_policy::require_native_plugins()?;
+
     {
         let mut manager = state.blocking_write();
         manager
@@ -180,6 +184,8 @@ pub fn uninstall_plugin(
     state: tauri::State<'_, Arc<tokio::sync::RwLock<PluginManager>>>,
     plugin_id: String,
 ) -> Result<(), String> {
+    omniget_core::core::personal_policy::require_native_plugins()?;
+
     {
         let mut manager = state.blocking_write();
         manager.unregister(&plugin_id).map_err(|e| e.to_string())?;
@@ -202,6 +208,7 @@ pub fn get_plugin_i18n(
     plugin_id: String,
     locale: String,
 ) -> Result<serde_json::Value, String> {
+    omniget_core::core::personal_policy::require_native_plugins()?;
     let manager = state.blocking_read();
     let i18n_dir = manager
         .plugin_dir(&plugin_id)
@@ -227,6 +234,8 @@ pub async fn plugin_command(
     command: String,
     args: serde_json::Value,
 ) -> Result<serde_json::Value, String> {
+    omniget_core::core::personal_policy::require_native_plugins()?;
+
     let manager = state.read().await;
     manager
         .handle_command(&plugin_id, &command, args)
@@ -275,6 +284,8 @@ pub struct MarketplaceEntry {
 pub async fn fetch_marketplace_registry(
     state: tauri::State<'_, Arc<tokio::sync::RwLock<PluginManager>>>,
 ) -> Result<Vec<MarketplaceEntry>, String> {
+    omniget_core::core::personal_policy::require_native_plugins()?;
+
     let client = crate::core::http_client::apply_global_proxy(
         reqwest::Client::builder()
             .user_agent("OmniGet")
@@ -409,6 +420,8 @@ pub async fn install_plugin_zip_from_repo(
     plugin_id: String,
     repo: String,
 ) -> Result<String, String> {
+    omniget_core::core::personal_policy::require_native_plugins()?;
+
     let suffix = platform_artifact_suffix();
     if suffix == "unknown" {
         return Err("Unsupported platform".to_string());
@@ -503,6 +516,8 @@ pub async fn install_plugin_from_registry(
     plugin_id: String,
     repo: String,
 ) -> Result<String, String> {
+    omniget_core::core::personal_policy::require_native_plugins()?;
+
     let version =
         install_plugin_zip_from_repo(&state.inner().clone(), plugin_id.clone(), repo).await?;
     {
@@ -534,6 +549,8 @@ pub struct PluginUpdateInfo {
 pub async fn check_plugin_updates(
     state: tauri::State<'_, Arc<tokio::sync::RwLock<PluginManager>>>,
 ) -> Result<Vec<PluginUpdateInfo>, String> {
+    omniget_core::core::personal_policy::require_native_plugins()?;
+
     let installed = {
         let manager = state.read().await;
         manager.installed_plugins().to_vec()
@@ -586,12 +603,36 @@ pub async fn update_plugin(
     plugin_id: String,
     repo: String,
 ) -> Result<String, String> {
+    omniget_core::core::personal_policy::require_native_plugins()?;
+
     install_plugin_from_registry(app, state, plugin_id, repo).await
 }
 
 #[cfg(test)]
 mod personal_plugin_tests {
     use super::*;
+
+    #[tokio::test]
+    async fn personal_marketplace_install_is_denied_before_network_or_filesystem_changes() {
+        let dir =
+            std::env::temp_dir().join(format!("omniget-no-marketplace-{}", uuid::Uuid::new_v4()));
+        let manager = Arc::new(tokio::sync::RwLock::new(PluginManager::new(dir.clone())));
+        let error = install_plugin_zip_from_repo(
+            &manager,
+            "courses".into(),
+            "tonhowtf/omniget-plugins".into(),
+        )
+        .await
+        .unwrap_err();
+        assert_eq!(
+            error,
+            omniget_core::core::personal_policy::DISABLED_PLUGIN_REASON
+        );
+        assert!(
+            !dir.exists(),
+            "disabled install touched the plugin directory"
+        );
+    }
 
     #[test]
     fn plugin_update_preserves_the_users_enable_choice_and_install_date() {

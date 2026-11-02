@@ -26,7 +26,6 @@
   const secondary: { mode: HomeInputMode; key: string; icon: string }[] = [
     { mode: "batch", key: "home.action_batch", icon: "M4 6h16M4 12h16M4 18h10" },
     { mode: "torrent", key: "home.action_torrent", icon: "M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8zM14 3v5h5" },
-    { mode: "p2p", key: "home.action_p2p", icon: "M22 2 11 13M22 2l-7 20-4-9-9-4z" },
   ];
 
   function pick(next: HomeInputMode) {

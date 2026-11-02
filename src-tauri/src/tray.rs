@@ -59,7 +59,7 @@ impl BadgeCache {
 }
 
 pub fn setup(app: &AppHandle) -> tauri::Result<()> {
-    let open_item = MenuItemBuilder::with_id("open", "OmniGet").build(app)?;
+    let open_item = MenuItemBuilder::with_id("open", "Origo Downloads").build(app)?;
     let downloads_item = MenuItemBuilder::with_id("downloads", active_label(0))
         .enabled(false)
         .build(app)?;
@@ -92,7 +92,7 @@ pub fn setup(app: &AppHandle) -> tauri::Result<()> {
 
     TrayIconBuilder::with_id("main-tray")
         .icon(icon)
-        .tooltip("OmniGet")
+        .tooltip("Origo Downloads")
         .menu(&menu)
         .on_menu_event(|app, event| match event.id().as_ref() {
             "open" => show_window(app),
@@ -163,9 +163,9 @@ pub fn update_active_count(app: &AppHandle, count: u32) {
 
     if let Some(tray) = app.tray_by_id("main-tray") {
         let tooltip = if count > 0 {
-            format!("OmniGet — {} active", count)
+            format!("Origo Downloads — {} active", count)
         } else {
-            "OmniGet".into()
+            "Origo Downloads".into()
         };
         let _ = tray.set_tooltip(Some(&tooltip));
 
@@ -225,12 +225,12 @@ pub fn update_speed_tooltip(app: &AppHandle, count: u32, total_speed_bps: f64) {
     if let Some(tray) = app.tray_by_id("main-tray") {
         let tooltip = if total_speed_bps > 0.0 {
             format!(
-                "OmniGet — {} active · {}",
+                "Origo Downloads — {} active · {}",
                 count,
                 format_speed(total_speed_bps)
             )
         } else {
-            format!("OmniGet — {} active", count)
+            format!("Origo Downloads — {} active", count)
         };
         let _ = tray.set_tooltip(Some(&tooltip));
     }

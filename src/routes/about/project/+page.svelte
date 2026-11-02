@@ -1,45 +1,20 @@
 <script lang="ts">
-  import { open } from "@tauri-apps/plugin-shell";
   import { t } from "$lib/i18n";
 
-  const GITHUB_URL = "https://github.com/tonhowtf/omniget";
-  const APP_VERSION = "0.9.2";
+  const APP_VERSION = "0.9.6";
 
-  async function openGitHub() {
-    await open(GITHUB_URL);
-  }
 </script>
-
-<section class="star-section">
-  <p class="star-description">{$t('about.star_description')}</p>
-  <div class="star-iframe-wrapper">
-    <iframe
-      src="https://ghbtns.com/github-btn.html?user=tonhowtf&repo=omniget&type=star&count=true&size=large"
-      frameborder="0"
-      scrolling="0"
-      width="170"
-      height="30"
-      title="GitHub Stars"
-    ></iframe>
-  </div>
-  <button class="star-button" onclick={openGitHub}>
-    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" stroke="none">
-      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-    </svg>
-    {$t('about.star_button')}
-  </button>
-</section>
 
 <section class="project-header">
   <img src="/loop.png" alt="Loop" class="project-logo" width="64" height="64" />
   <p class="project-description">{$t('about.description')}</p>
+  <p class="project-description">{$t('about.upstream_attribution')}</p>
 </section>
 
 <section class="card">
   <h5 class="card-title">{$t('about.features_title')}</h5>
   <div class="features-list">
-    <p class="feature-item">{$t('about.feature_platforms')}</p>
-    <p class="feature-item">{$t('about.feature_hotmart')}</p>
+    <p class="feature-item">YouTube · Instagram · TikTok · Twitter/X · Reddit · Twitch · Pinterest · Vimeo · Bluesky</p>
     <p class="feature-item">{$t('about.feature_progress')}</p>
     <p class="feature-item">{$t('about.feature_mascot')}</p>
     <p class="feature-item">{$t('about.feature_themes')}</p>
@@ -51,63 +26,6 @@
 <p class="version">{$t('about.version')} {APP_VERSION}</p>
 
 <style>
-  .star-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--padding);
-    width: 100%;
-  }
-
-  .star-description {
-    font-size: var(--text-base);
-    font-weight: 500;
-    color: var(--secondary);
-  }
-
-  .star-iframe-wrapper {
-    display: flex;
-    justify-content: center;
-  }
-
-  .star-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: calc(var(--padding) / 2);
-    margin: 0 auto;
-    padding: calc(var(--padding) / 2) calc(var(--padding) * 1.5);
-    font-size: var(--text-base);
-    font-weight: 500;
-    color: var(--text);
-    background: var(--surface);
-    border: none;
-    border-radius: var(--radius-md);
-    cursor: pointer;
-    transition: background var(--duration-fast) var(--ease-out);
-  }
-
-  .star-button svg {
-    pointer-events: none;
-    flex-shrink: 0;
-    color: var(--warning);
-  }
-
-  @media (hover: hover) {
-    .star-button:hover {
-      background: var(--surface-hi);
-    }
-  }
-
-  .star-button:active {
-    background: var(--fill-2);
-  }
-
-  .star-button:focus-visible {
-    outline: var(--focus-ring);
-    outline-offset: var(--focus-ring-offset);
-  }
-
   .project-header {
     display: flex;
     flex-direction: column;

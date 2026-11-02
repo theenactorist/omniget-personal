@@ -169,7 +169,7 @@
       </div>
       <h2>Conectar sua conta Spotify</h2>
       <p class="login-body">
-        Veja sua biblioteca, playlists e histórico do Spotify dentro do OmniGet.
+        Veja sua biblioteca, playlists e histórico do Spotify dentro do Origo Downloads.
         Você pode tocar em qualquer dispositivo Spotify ativo (celular, app
         oficial). Em breve, tocar direto aqui também.
       </p>
@@ -205,7 +205,7 @@
     {#if spotifyStore.isPremium && spotifyStore.widevineSupported}
       <div class="status-banner sdk">
         <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-        Tocando dentro do OmniGet (Web Playback SDK)
+        Tocando dentro do Origo Downloads (Web Playback SDK)
       </div>
     {:else if !spotifyStore.isPremium}
       <div class="status-banner info">

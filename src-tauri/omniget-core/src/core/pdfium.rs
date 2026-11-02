@@ -1,5 +1,5 @@
 use std::io::Read;
-use std::path::{Path, PathBuf};
+use std::path::{Component, Path, PathBuf};
 
 use anyhow::{anyhow, Context};
 use serde::Serialize;
@@ -101,17 +101,105 @@ fn archive_name_for_variant(variant: Option<&str>) -> String {
     format!("pdfium-{}.tgz", id)
 }
 
+fn absolute_normalized(path: &Path) -> Option<PathBuf> {
+    let absolute = if path.is_absolute() {
+        path.to_path_buf()
+    } else {
+        std::env::current_dir().ok()?.join(path)
+    };
+    let mut normalized = PathBuf::new();
+    for component in absolute.components() {
+        match component {
+            Component::CurDir => {}
+            Component::ParentDir => {
+                normalized.pop();
+            }
+            other => normalized.push(other.as_os_str()),
+        }
+    }
+    Some(normalized)
+}
+
+/// Resolve existing parents too: a future library under a symlinked directory
+/// must be rejected before an installer creates it or downloads anything.
+fn canonical_with_missing_tail(path: &Path) -> Option<PathBuf> {
+    let mut existing = if path.is_absolute() {
+        path.to_path_buf()
+    } else {
+        std::env::current_dir().ok()?.join(path)
+    };
+    let mut tail = Vec::new();
+    loop {
+        match std::fs::canonicalize(&existing) {
+            Ok(mut resolved) => {
+                for component in tail.iter().rev() {
+                    resolved.push(component);
+                }
+                return absolute_normalized(&resolved);
+            }
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
+                tail.push(existing.file_name()?.to_os_string());
+                if !existing.pop() {
+                    return None;
+                }
+            }
+            Err(_) => return None,
+        }
+    }
+}
+
+fn allowed_pdfium_path(path: &Path, app_data: &Path) -> bool {
+    let plugins = app_data.join("plugins");
+    let Some(lexical_plugins) = absolute_normalized(&plugins) else {
+        return false;
+    };
+    let Some(lexical_candidate) = absolute_normalized(path) else {
+        return false;
+    };
+    if lexical_candidate.starts_with(&lexical_plugins) {
+        return false;
+    }
+    let Some(canonical_plugins) = canonical_with_missing_tail(&plugins) else {
+        return false;
+    };
+    let Some(canonical_candidate) = canonical_with_missing_tail(path) else {
+        return false;
+    };
+    !canonical_candidate.starts_with(&canonical_plugins)
+}
+
+fn require_independent_pdfium(path: &Path) -> anyhow::Result<()> {
+    let app_data = crate::core::paths::app_data_dir()
+        .ok_or_else(|| anyhow!("could not determine app data dir"))?;
+    if !allowed_pdfium_path(path, &app_data) {
+        return Err(anyhow!("PDFium helpers from the disabled plugins directory cannot be used. Choose an independent PDFium library."));
+    }
+    Ok(())
+}
+
+fn independent_candidate(path: &Path, app_data: &Path) -> Option<PathBuf> {
+    (allowed_pdfium_path(path, app_data) && path.is_file()).then(|| path.to_path_buf())
+}
+
+fn managed_dir(app_data: &Path) -> Option<PathBuf> {
+    let target = app_data.join("bin").join("pdfium");
+    allowed_pdfium_path(&target, app_data).then_some(target)
+}
+
 pub fn pdfium_target_dir() -> Option<PathBuf> {
-    let app_data = crate::core::paths::app_data_dir()?;
-    Some(app_data.join("plugins").join("study").join("data"))
+    managed_dir(&crate::core::paths::app_data_dir()?)
 }
 
 pub fn pdfium_target_path() -> Option<PathBuf> {
-    pdfium_target_dir().map(|d| d.join(pdfium_lib_filename()))
+    let path = pdfium_target_dir()?.join(pdfium_lib_filename());
+    require_independent_pdfium(&path).ok()?;
+    Some(path)
 }
 
 pub fn pdfium_version_marker_path() -> Option<PathBuf> {
-    pdfium_target_dir().map(|d| d.join("pdfium.version"))
+    let path = pdfium_target_dir()?.join("pdfium.version");
+    require_independent_pdfium(&path).ok()?;
+    Some(path)
 }
 
 /// The PDFium library actually in use, and where it came from: `"custom"` for
@@ -122,14 +210,15 @@ pub fn pdfium_version_marker_path() -> Option<PathBuf> {
 /// only the managed folder was ever checked — so a linked library was
 /// recorded and displayed while the status stayed "missing".
 pub fn resolve_with_source() -> Option<(PathBuf, &'static str)> {
+    let app_data = crate::core::paths::app_data_dir()?;
     if let Some(custom) = crate::core::binary_overrides::get("PDFium") {
-        if custom.is_file() {
-            return Some((custom, "custom"));
+        if let Some(path) = independent_candidate(&custom, &app_data) {
+            return Some((path, "custom"));
         }
     }
     let managed = pdfium_target_path()?;
-    if managed.is_file() {
-        return Some((managed, "managed"));
+    if let Some(path) = independent_candidate(&managed, &app_data) {
+        return Some((path, "managed"));
     }
     None
 }
@@ -168,6 +257,7 @@ pub async fn ensure_pdfium_with_variant(variant: Option<String>) -> anyhow::Resu
     let url = format!("{}/{}", PDFIUM_DOWNLOAD_BASE, archive_name);
     let lib_filename = pdfium_lib_filename();
     let target_path = target_dir.join(lib_filename);
+    require_independent_pdfium(&target_path)?;
 
     tracing::info!("Downloading pdfium from {}", url);
 
@@ -221,10 +311,12 @@ pub async fn ensure_pdfium_with_variant(variant: Option<String>) -> anyhow::Resu
         .await;
     }
 
+    require_independent_pdfium(&target_path)?;
     Ok(target_path)
 }
 
 pub fn set_pdfium_from_path(source: &Path) -> anyhow::Result<PathBuf> {
+    require_independent_pdfium(source)?;
     if !source.is_file() {
         return Err(anyhow!("source not a file: {}", source.display()));
     }
@@ -234,8 +326,10 @@ pub fn set_pdfium_from_path(source: &Path) -> anyhow::Result<PathBuf> {
         .with_context(|| format!("creating pdfium target dir {}", target_dir.display()))?;
     let lib_filename = pdfium_lib_filename();
     let target_path = target_dir.join(lib_filename);
+    require_independent_pdfium(&target_path)?;
 
     let tmp = target_dir.join(format!(".{}.tmp", lib_filename));
+    require_independent_pdfium(&tmp)?;
     std::fs::copy(source, &tmp)
         .with_context(|| format!("copying {} → {}", source.display(), tmp.display()))?;
     if target_path.exists() {
@@ -252,6 +346,7 @@ pub fn set_pdfium_from_path(source: &Path) -> anyhow::Result<PathBuf> {
         let value = format!("custom ({})", label);
         let _ = std::fs::write(&version_marker, value);
     }
+    require_independent_pdfium(&target_path)?;
     Ok(target_path)
 }
 
@@ -261,6 +356,8 @@ fn extract_pdfium_archive(
     target_dir: &std::path::Path,
     lib_filename: &str,
 ) -> anyhow::Result<Option<String>> {
+    require_independent_pdfium(target_dir)?;
+    require_independent_pdfium(target_path)?;
     let gz = flate2::read::GzDecoder::new(bytes);
     let mut tar_archive = tar::Archive::new(gz);
 
@@ -280,6 +377,7 @@ fn extract_pdfium_archive(
             let mut buf = Vec::new();
             entry.read_to_end(&mut buf)?;
             let tmp = target_dir.join(format!(".{}.tmp", lib_filename));
+            require_independent_pdfium(&tmp)?;
             std::fs::write(&tmp, &buf)
                 .with_context(|| format!("writing temp pdfium lib {}", tmp.display()))?;
             if target_path.exists() {
@@ -300,4 +398,101 @@ fn extract_pdfium_archive(
     }
 
     Ok(version)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn test_root() -> PathBuf {
+        let root =
+            std::env::temp_dir().join(format!("omniget-pdfium-policy-{}", uuid::Uuid::new_v4()));
+        std::fs::create_dir_all(&root).unwrap();
+        root
+    }
+
+    #[test]
+    fn pdfium_rejects_plugin_paths_and_preserves_independent_helpers() {
+        let root = test_root();
+        let plugin = root.join("plugins/study").join(pdfium_lib_filename());
+        let legacy_managed = root.join("plugins/study/data").join(pdfium_lib_filename());
+        std::fs::create_dir_all(legacy_managed.parent().unwrap()).unwrap();
+        std::fs::write(&plugin, b"not a native library").unwrap();
+        std::fs::write(&legacy_managed, b"not a native library").unwrap();
+        assert!(independent_candidate(&plugin, &root).is_none());
+        assert!(independent_candidate(&legacy_managed, &root).is_none());
+        assert!(!allowed_pdfium_path(
+            &root.join("bin/../plugins/study/missing-library"),
+            &root
+        ));
+
+        let managed = managed_dir(&root).unwrap();
+        assert_eq!(managed, root.join("bin/pdfium"));
+        std::fs::create_dir_all(&managed).unwrap();
+        let independent = managed.join(pdfium_lib_filename());
+        std::fs::write(&independent, b"not a native library").unwrap();
+        assert_eq!(
+            independent_candidate(&independent, &root),
+            Some(independent)
+        );
+        assert!(allowed_pdfium_path(
+            &root.join("plugins-independent/helper"),
+            &root
+        ));
+        std::fs::remove_dir_all(root).unwrap();
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn pdfium_rejects_plugin_symlinks_in_both_directions() {
+        use std::os::unix::fs::symlink;
+        let root = test_root();
+        let plugin = root.join("plugins/study").join(pdfium_lib_filename());
+        let independent = root.join("independent").join(pdfium_lib_filename());
+        std::fs::create_dir_all(plugin.parent().unwrap()).unwrap();
+        std::fs::create_dir_all(independent.parent().unwrap()).unwrap();
+        std::fs::write(&plugin, b"not a native library").unwrap();
+        std::fs::write(&independent, b"not a native library").unwrap();
+
+        let disguised_plugin = root.join("independent/disguised-helper");
+        symlink(&plugin, &disguised_plugin).unwrap();
+        assert!(independent_candidate(&disguised_plugin, &root).is_none());
+        let plugin_directory_alias = root.join("plugin-alias");
+        symlink(plugin.parent().unwrap(), &plugin_directory_alias).unwrap();
+        assert!(
+            independent_candidate(&plugin_directory_alias.join(pdfium_lib_filename()), &root)
+                .is_none()
+        );
+
+        let lexical_plugin = root.join("plugins/study/linked-independent");
+        symlink(&independent, &lexical_plugin).unwrap();
+        assert!(independent_candidate(&lexical_plugin, &root).is_none());
+        let independent_alias = root.join("independent-alias");
+        symlink(&independent, &independent_alias).unwrap();
+        assert!(independent_candidate(&independent_alias, &root).is_some());
+        std::fs::remove_dir_all(root).unwrap();
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn pdfium_rejects_symlinked_managed_directories_before_files_exist() {
+        use std::os::unix::fs::symlink;
+        let root = test_root();
+        let app_data = root.join("app");
+        let external_plugins = root.join("plugin-files");
+        std::fs::create_dir_all(&app_data).unwrap();
+        std::fs::create_dir_all(&external_plugins).unwrap();
+        symlink(&external_plugins, app_data.join("plugins")).unwrap();
+        assert!(!allowed_pdfium_path(
+            &external_plugins.join("study/missing-library"),
+            &app_data
+        ));
+        symlink(&external_plugins, app_data.join("bin")).unwrap();
+        assert!(managed_dir(&app_data).is_none());
+        assert!(!allowed_pdfium_path(
+            &app_data.join("bin/pdfium/missing-library"),
+            &app_data
+        ));
+        std::fs::remove_dir_all(root).unwrap();
+    }
 }

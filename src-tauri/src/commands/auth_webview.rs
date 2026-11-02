@@ -46,6 +46,8 @@ pub async fn open_auth_webview(
     app: AppHandle,
     request: AuthWebviewRequest,
 ) -> Result<AuthWebviewResult, String> {
+    omniget_core::core::personal_policy::require_url(&request.url)?;
+
     tracing::info!(
         "[auth_webview] opening: url={}, success_pattern={:?}, wait_for={:?}, domains={:?}",
         request.url,
@@ -92,6 +94,9 @@ pub async fn open_auth_webview(
 
     let webview_window = builder
         .on_navigation(move |url| {
+            if !omniget_core::core::personal_policy::url_enabled(url.as_str()) {
+                return false;
+            }
             let url_str = url.to_string();
             tracing::debug!("[auth_webview] navigation: {}", url_str);
 

@@ -660,6 +660,8 @@ pub async fn probe_remote(
     headers: Option<&reqwest::header::HeaderMap>,
     timeout: Duration,
 ) -> anyhow::Result<RemoteProbe> {
+    crate::core::personal_policy::require_url(url).map_err(anyhow::Error::msg)?;
+
     let mut req = client.head(url);
     if let Some(h) = headers {
         req = req.headers(h.clone());

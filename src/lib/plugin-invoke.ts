@@ -1,13 +1,9 @@
-import { invoke } from "@tauri-apps/api/core";
+import { PLUGINS_UNAVAILABLE_MESSAGE } from "$lib/personal-build-policy";
 
 export async function pluginInvoke<T>(
-  pluginId: string,
-  command: string,
-  args: Record<string, unknown> = {},
+  _pluginId: string,
+  _command: string,
+  _args: Record<string, unknown> = {},
 ): Promise<T> {
-  return invoke<T>("plugin_command", {
-    pluginId,
-    command,
-    args,
-  });
+  throw new Error(PLUGINS_UNAVAILABLE_MESSAGE);
 }

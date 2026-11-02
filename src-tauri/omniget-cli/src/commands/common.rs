@@ -9,9 +9,9 @@ use omniget_core::models::media::{DownloadOptions, MediaInfo};
 use omniget_core::models::settings::ProxySettings;
 use omniget_core::platforms::{
     BilibiliDownloader, BlueskyDownloader, DirectFileDownloader, DouyinDownloader,
-    GenericYtdlpDownloader, InstagramDownloader, P2pDownloader, PinterestDownloader,
-    PlatformDownloader, RedditDownloader, ThreadsDownloader, TikTokDownloader,
-    TwitchClipsDownloader, TwitterDownloader, VimeoDownloader, YouTubeDownloader,
+    GenericYtdlpDownloader, InstagramDownloader, PinterestDownloader, PlatformDownloader,
+    RedditDownloader, ThreadsDownloader, TikTokDownloader, TwitchClipsDownloader,
+    TwitterDownloader, VimeoDownloader, YouTubeDownloader,
 };
 use tokio_util::sync::CancellationToken;
 
@@ -92,7 +92,6 @@ pub fn core_platform_registry() -> PlatformRegistry {
     registry.register(Arc::new(VimeoDownloader::new()));
     registry.register(Arc::new(BilibiliDownloader::new()));
     registry.register(Arc::new(DouyinDownloader::new()));
-    registry.register(Arc::new(P2pDownloader::new()));
     registry.register(Arc::new(DirectFileDownloader::new()));
     registry.register(Arc::new(GenericYtdlpDownloader::new()));
     registry
@@ -102,6 +101,7 @@ pub async fn resolve_media_info(
     registry: &PlatformRegistry,
     url: &str,
 ) -> Result<(Arc<dyn PlatformDownloader>, MediaInfo)> {
+    omniget_core::core::personal_policy::require_url(url).map_err(anyhow::Error::msg)?;
     let platform = registry
         .find_platform(url)
         .unwrap_or_else(|| Arc::new(GenericYtdlpDownloader::new()));

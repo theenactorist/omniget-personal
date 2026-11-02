@@ -948,7 +948,7 @@ class MusicPlayerStore {
       position,
       paused,
       large_image_key: coverUrl,
-      large_image_text: artist || "omniget · study",
+      large_image_text: artist || "Origo Downloads · study",
       small_image_key: smallImageKey,
       small_image_text: smallImageText,
       primary_button_url: primaryButtonUrl,

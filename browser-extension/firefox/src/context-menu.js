@@ -4,7 +4,7 @@ export function registerContextMenu() {
   chrome.contextMenus.removeAll(() => {
     chrome.contextMenus.create({
       id: MENU_ID,
-      title: "Download with OmniGet Personal",
+      title: "Download with Origo Downloads",
       contexts: ["link", "video", "audio", "image"],
     });
   });

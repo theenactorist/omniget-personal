@@ -24,8 +24,8 @@
     "confirm": "仍然關閉"
   },
   "legal": {
-    "title": "請負責任地使用 OmniGet",
-    "body_paragraph_1": "OmniGet 是一個媒體下載工具。您需要為使用方式負責。",
+    "title": "請負責任地使用 Origo Downloads",
+    "body_paragraph_1": "Origo Downloads 是一個媒體下載工具。您需要為使用方式負責。",
     "body_paragraph_2": "在繼續之前，請記住：",
     "rule_copyright": "尊重創作者的著作權和智慧財產權。",
     "rule_tos": "遵守您下載內容的每個平台的服務條款。",
@@ -34,7 +34,7 @@
   },
   "recovery": {
     "title": "未完成的下載",
-    "message": "OmniGet 發現上次工作階段有 {{count}} 個未完成的下載。要恢復嗎？",
+    "message": "Origo Downloads 發現上次工作階段有 {{count}} 個未完成的下載。要恢復嗎？",
     "more": "還有 {{count}} 個...",
     "restore": "恢復下載",
     "discard": "捨棄",
@@ -73,7 +73,7 @@
     "items_boots": "鞋子",
     "items_last": "後期裝備",
     "counters": "苦手對手",
-    "runes_full": "符文頁已滿。請在客戶端刪除一頁，讓 OmniGet 建立自己的頁面。",
+    "runes_full": "符文頁已滿。請在客戶端刪除一頁，讓 Origo Downloads 建立自己的頁面。",
     "build_empty": "樣本中還沒有該英雄的對戰。",
     "tab_meta": "版本",
     "runes_title": "符文",
@@ -220,7 +220,7 @@
     "respawn_in": "復活倒數",
     "automation_title": "自動化",
     "notify_ready": "找到對局時通知",
-    "notify_ready_desc": "僅在 OmniGet 視窗未取得焦點時發送系統通知。",
+    "notify_ready_desc": "僅在 Origo Downloads 視窗未取得焦點時發送系統通知。",
     "auto_pick": "自動選角",
     "auto_pick_desc": "輪到你時自動選擇清單中第一個可用的英雄。",
     "auto_ban": "自動禁用",
@@ -497,14 +497,14 @@
   },
   "home": {
     "inspector_title": "Download options",
-    "hero_title": "OmniGet",
+    "hero_title": "Origo Downloads",
     "hero_subtitle": "Paste a link or search. We'll take it from there.",
     "action_batch": "Many links at once",
     "action_torrent": "Open a .torrent file",
     "action_p2p": "Send a file to someone",
     "action_advanced": "Advanced options",
     "action_simple": "Back to the simple view",
-    "value_line": "{{count}} files · {{size}} saved with OmniGet",
+    "value_line": "{{count}} files · {{size}} saved with Origo Downloads",
     "value_first": "Your first download takes about a minute. Private content only needs your browser cookies."
   },
   "tools": {
@@ -552,7 +552,7 @@
     "lc_exported": "已匯出 {{name}}",
     "hub": {
       "title": "Tools",
-      "subtitle": "Everything OmniGet does beyond downloading, in one place.",
+      "subtitle": "Everything Origo Downloads does beyond downloading, in one place.",
       "search_placeholder": "Search tools, categories or platforms…",
       "filter_label": "Platform",
       "categories": "Categories",
@@ -577,7 +577,7 @@
       "empty_desc": "Try another word, or change the platform filter.",
       "not_on_this_os": "This tool does not run on your system ({{os}}).",
       "soon_title": "In development",
-      "soon_desc": "This tool is on OmniGet's roadmap and does not work yet. It is listed so you know what is coming."
+      "soon_desc": "This tool is on Origo Downloads' roadmap and does not work yet. It is listed so you know what is coming."
     },
     "categories": {
       "youtube": {
@@ -586,7 +586,7 @@
       },
       "video": {
         "name": "Video editing",
-        "desc": "Cut, convert, record and assemble videos without leaving OmniGet."
+        "desc": "Cut, convert, record and assemble videos without leaving Origo Downloads."
       },
       "instagram": {
         "name": "Instagram",
@@ -832,11 +832,11 @@
       },
       "ai-usage": {
         "name": "AI spending",
-        "desc": "How much OmniGet spent on AI, by day, model and task."
+        "desc": "How much Origo Downloads spent on AI, by day, model and task."
       },
       "ai-mcp": {
         "name": "MCP server",
-        "desc": "Let Claude, Goose or Cursor drive OmniGet's tools."
+        "desc": "Let Claude, Goose or Cursor drive Origo Downloads' tools."
       },
       "yt-sponsorblock": {
         "name": "SponsorBlock",
@@ -1108,7 +1108,7 @@
       },
       "ig-schedule": {
         "name": "Schedule posts",
-        "desc": "Queue posts for a date and time; OmniGet publishes them while open."
+        "desc": "Queue posts for a date and time; Origo Downloads publishes them while open."
       },
       "video-compress": {
         "name": "Compress to a size",
@@ -1307,7 +1307,7 @@
       "title": "Spicetify",
       "cli_row": "Spicetify CLI",
       "cli_missing": "Not installed",
-      "cli_source_managed": "managed by OmniGet",
+      "cli_source_managed": "managed by Origo Downloads",
       "cli_source_system": "found on this system",
       "cli_source_custom": "custom path",
       "install": "Install",
@@ -1452,7 +1452,7 @@
       "daemon": "Service",
       "running": "running",
       "stopped": "not running",
-      "stopped_hint": "Install Ollama and open it; OmniGet talks to it on port 11434.",
+      "stopped_hint": "Install Ollama and open it; Origo Downloads talks to it on port 11434.",
       "get": "Get Ollama",
       "use_hint": "In Settings → AI pick the local provider with base URL",
       "installed": "Installed models",
@@ -1474,7 +1474,7 @@
     },
     "usage": {
       "calls": "calls",
-      "intro": "Every AI call OmniGet makes is logged locally; cost uses the current price table.",
+      "intro": "Every AI call Origo Downloads makes is logged locally; cost uses the current price table.",
       "unknown_price": "without a known price",
       "by_day": "By day",
       "by_model": "By model",
@@ -1576,7 +1576,7 @@
     "awake": {
       "on": "Keeping the computer awake",
       "off": "Not active",
-      "intro": "Blocks sleep and the screen saver until you stop it or close OmniGet.",
+      "intro": "Blocks sleep and the screen saver until you stop it or close Origo Downloads.",
       "start": "Keep awake",
       "stop": "Stop",
       "note": "Downloads already keep the computer awake when the option is on in Settings."
@@ -1593,7 +1593,7 @@
     },
     "wintweaks": {
       "only_windows": "These settings only exist on Windows. The list is shown so you know what the tool does.",
-      "admin_hint": "Rules marked admin need OmniGet running as administrator.",
+      "admin_hint": "Rules marked admin need Origo Downloads running as administrator.",
       "restart": "Sign out or restart to see the change.",
       "group_privacy": "Privacy & telemetry",
       "group_ui": "Interface",
@@ -2008,7 +2008,7 @@
         "label": "Instagram account",
         "checking": "Checking session…",
         "none_title": "No Instagram session",
-        "none_desc": "Open instagram.com logged in, in a browser with the OmniGet extension: the cookies are captured automatically. You can also paste a cookies.txt in Settings → Cookies.",
+        "none_desc": "Open instagram.com logged in, in a browser with the Origo Downloads extension: the cookies are captured automatically. You can also paste a cookies.txt in Settings → Cookies.",
         "open_site": "Open instagram.com",
         "cookies": "Cookies"
       },
@@ -2259,7 +2259,7 @@
         "beta": "Beta. Test with a photo first. Videos are transcoded by Instagram after upload; the app waits for confirmation.",
         "queue": "Queue",
         "queue_empty": "Nothing scheduled.",
-        "queue_hint": "The queue runs only while OmniGet is open.",
+        "queue_hint": "The queue runs only while Origo Downloads is open.",
         "status_pending": "pending",
         "status_running": "publishing",
         "status_done": "published",
@@ -2424,8 +2424,8 @@
       "test": "Test",
       "balance": "Balance",
       "models": "models",
-      "use": "Use in OmniGet",
-      "used": "OmniGet now uses this key (Settings → AI).",
+      "use": "Use in Origo Downloads",
+      "used": "Origo Downloads now uses this key (Settings → AI).",
       "edit": "Edit",
       "none": "No accounts yet. Add an OpenAI, Anthropic, OpenRouter, DeepSeek, Gemini, Groq, xAI, Mistral, SiliconFlow, New API relay, Ollama or any OpenAI-compatible endpoint.",
       "export": "Export",
@@ -2472,7 +2472,7 @@
       "grab": "Use cursor position",
       "delay": "Start delay",
       "delay_hint": "Seconds before the first click, so you can move the cursor.",
-      "perm": "macOS asks for Accessibility permission for OmniGet the first time. On Wayland synthetic clicks may not work."
+      "perm": "macOS asks for Accessibility permission for Origo Downloads the first time. On Wayland synthetic clicks may not work."
     },
     "dictation": {
       "phase_idle": "Ready",
@@ -2520,13 +2520,13 @@
       "quality_hint": "Lower CRF = better and bigger. 23 is the x264 default.",
       "cursor": "cursor",
       "default_dir": "Videos/OmniGet",
-      "perm": "macOS asks for Screen Recording permission for OmniGet the first time; if the recording ends at once, grant it in Privacy and try again."
+      "perm": "macOS asks for Screen Recording permission for Origo Downloads the first time; if the recording ends at once, grant it in Privacy and try again."
     },
     "vs": {
       "running": "running",
       "not_running": "installed, not running",
       "engine": "engine",
-      "hint": "VoiceStudio (open source, local) does the heavy lifting: OmniGet talks to its API on port 3900.",
+      "hint": "VoiceStudio (open source, local) does the heavy lifting: Origo Downloads talks to its API on port 3900.",
       "launching": "Opening VoiceStudio; the backend takes a few seconds.",
       "base_url": "Backend address",
       "base_url_hint": "Change only if VoiceStudio runs on another port or machine.",
@@ -2563,7 +2563,7 @@
       "what": "What it does",
       "what_hint": "Makes YouTube serve H.264 instead of VP9/AV1. Old or weak machines decode H.264 in hardware, so playback stops stuttering and the fan quiets down. Quality above 1080p may become unavailable.",
       "how": "How to turn it on",
-      "step1": "Install the OmniGet browser extension and pair it in Settings.",
+      "step1": "Install the Origo Downloads browser extension and pair it in Settings.",
       "step2": "Open the extension popup on any tab and turn on the H.264 toggle (third switch in the header).",
       "step3": "Reload YouTube. The setting persists until you turn it off.",
       "extension": "Browser extension",
@@ -2573,6 +2573,11 @@
       "userscript_hint": "Same trick as a userscript for Tampermonkey / Violentmonkey."
     },
     "vcompress": {
+      "sharing_preset": "壓縮預設",
+      "sharing_custom": "自訂",
+      "sharing_whatsapp": "WhatsApp 影片",
+      "whatsapp_hint": "含聲音的 MP4，目標大小低於 16 MB。保留完整影片，並降低畫質以控制大小。",
+      "run_whatsapp": "壓縮為 WhatsApp 影片",
       "target": "Target size",
       "target_hint": "Discord 10 MB · e-mail 25 MB",
       "codec": "Codec",
@@ -3568,6 +3573,9 @@
     "history_requeued": "已重新加入佇列",
     "show_more": "顯示另外 {{count}} 項",
     "open_folder": "在資料夾中顯示",
+    "saved_to": "儲存位置",
+    "saved_to_path": "已儲存至 {{path}}",
+    "saved_location_unavailable": "未記錄儲存位置",
     "open_in_study": "Watch in Study",
     "stop": "停止",
     "confirm_remove": "移除此下载？",
@@ -3815,9 +3823,9 @@
     "general": {
       "title": "一般",
       "start_with_system": "與系統一同啟動",
-      "start_with_system_desc": "當系統啟動時自動啟動 OmniGet",
+      "start_with_system_desc": "當系統啟動時自動啟動 Origo Downloads",
       "start_minimized": "僅工作列啟動",
-      "start_minimized_desc": "在系統工作列中開啟 OmniGet 而不顯示視窗。點擊工作列圖示開啟。",
+      "start_minimized_desc": "在系統工作列中開啟 Origo Downloads 而不顯示視窗。點擊工作列圖示開啟。",
       "reset_hints": "重置提示",
       "reset_hints_desc": "重新显示所有已关闭的提示",
       "restore": "恢复",
@@ -3976,7 +3984,7 @@
       "filename_template_desc": "下載檔案使用的 yt-dlp 輸出範本",
       "filename_template_preview": "預覽: {{preview}}"
     },
-    "update_available": "OmniGet {{version}} 可供更新",
+    "update_available": "Origo Downloads {{version}} 可供更新",
     "update_button": "立即更新",
     "update_downloading": "正在下載更新...",
     "telegram": {
@@ -3987,7 +3995,7 @@
     },
     "browser_ext": {
       "title": "瀏覽器擴充功能",
-      "description": "擴充功能會將瀏覽器中的 Cookie 與網址傳送給 OmniGet。目前尚未上架官方商店，請使用下方按鈕匯出目前版本並手動安裝。",
+      "description": "擴充功能會將瀏覽器中的 Cookie 與網址傳送給 Origo Downloads。目前尚未上架官方商店，請使用下方按鈕匯出目前版本並手動安裝。",
       "bundled_version": "內建版本：v{{version}}",
       "extracting": "正在匯出…",
       "update_install": "更新 / 安裝",
@@ -3995,7 +4003,7 @@
       "unavailable": "無法使用",
       "hint_chrome": "chrome://extensions → 開發人員模式 → 「載入未封裝項目」 → 選擇匯出的資料夾。",
       "hint_firefox": "about:debugging#/runtime/this-firefox → 「載入暫時附加元件」 → 選擇匯出資料夾中的 manifest.json。Firefox 重新啟動後會移除暫時附加元件，因此在我們上架 AMO 之前需要重複此步驟。",
-      "hint_safari": "自 Safari 14 起，擴充功能必須透過 Mac App Store 發佈。OmniGet 擴充功能的 Safari 版本尚未發佈。"
+      "hint_safari": "自 Safari 14 起，擴充功能必須透過 Mac App Store 發佈。Origo Downloads 擴充功能的 Safari 版本尚未發佈。"
     },
     "rules": {
       "title": "規則",
@@ -4046,8 +4054,8 @@
       "silence_none": "這個檔案幾乎沒有靜音",
       "silence_done": "發現 {{saved}} 的靜音 —— 播放時可以略過",
       "portable_label": "Portable Mode",
-      "portable_active": "Portable mode is active. OmniGet's data is stored in {{dir}}.",
-      "portable_macos_notice": "On macOS the WebView still stores its session data under ~/Library, and portable mode cannot redirect it. Only OmniGet's own data is portable here — see github.com/tonhowtf/omniget/issues/227."
+      "portable_active": "Portable mode is active. Origo Downloads' data is stored in {{dir}}.",
+      "portable_macos_notice": "On macOS the WebView still stores its session data under ~/Library, and portable mode cannot redirect it. Only Origo Downloads' own data is portable here — see github.com/tonhowtf/omniget/issues/227."
     },
     "dependencies": {
       "title": "相依元件",
@@ -4102,7 +4110,7 @@
       "spacing_desc": "乘上間距標記 (padding、gap、margin)。1.0× 為預設。0.85× 緊湊整個 UI;1.25× 更寬鬆。",
       "preview_title": "預覽",
       "preview_desc": "即時顯示。遵循目前主題。",
-      "preset_omniget_default_name": "Omniget 預設",
+      "preset_omniget_default_name": "Origo Downloads 預設",
       "preset_omniget_default_desc": "Bricolage display、Inter body、Plex Mono。標準配置。",
       "preset_notion_like_name": "Notion 風格",
       "preset_notion_like_desc": "display + body 皆用 Inter。透過大小+粗細呈現層級,而非切換字族。",
@@ -4210,7 +4218,7 @@
     },
     "bridge": {
       "title": "瀏覽器擴充功能",
-      "intro": "透過私有的本機連線將 OmniGet 瀏覽器擴充功能與此應用程式配對。打開擴充功能的選項頁面，貼上下方的端點 URL 與權杖，然後按下儲存。",
+      "intro": "透過私有的本機連線將 Origo Downloads 瀏覽器擴充功能與此應用程式配對。打開擴充功能的選項頁面，貼上下方的端點 URL 與權杖，然後按下儲存。",
       "pair_label": "配對擴充功能",
       "pair_hint": "在此點一下，已安裝的擴充功能會自動連線——免複製貼上。",
       "pair": "配對擴充功能",
@@ -4300,7 +4308,7 @@
       "capture_via_extension": "Capture via extension",
       "open_folder": "Open folder",
       "dir_label": "Folder:",
-      "hint_use_extension": "On any logged-in site, click the omniget extension icon in your browser. The cookies show up here in seconds.",
+      "hint_use_extension": "On any logged-in site, click the Origo Downloads extension icon in your browser. The cookies show up here in seconds.",
       "empty_title": "No cookies here yet",
       "empty_body": "Use the browser extension to capture cookies from sites where you're logged in, or import a file manually.",
       "status_fresh": "Fresh cookies",
@@ -4528,6 +4536,7 @@
     "install_courses_plugin": "Get the Courses plugin"
   },
   "about": {
+    "upstream_attribution": "Origo Downloads 是以 tonho.wtf 的 OmniGet 為基礎製作的個人版本。",
     "tab": {
       "overview": "Overview",
       "terms": "使用條款",
@@ -4550,14 +4559,14 @@
     "card_project_title": "The project",
     "card_project_desc": "Roadmap, philosophy and how to contribute.",
     "card_terms_title": "Terms & ethics",
-    "card_terms_desc": "What OmniGet expects from you, and what you can expect back.",
+    "card_terms_desc": "What Origo Downloads expects from you, and what you can expect back.",
     "description": "您的媒體下載好幫手。開源且免費。",
     "terms_title": "使用條款",
-    "terms_text": "OmniGet 以現況提供，我們不提供任何保證。此應用程式可協助下載網路上公開可取得的內容，但對於您下載的內容或其用途，我們不負任何責任。使用 OmniGet 即表示您同意此條款。",
+    "terms_text": "Origo Downloads 以現況提供，我們不提供任何保證。此應用程式可協助下載網路上公開可取得的內容，但對於您下載的內容或其用途，我們不負任何責任。使用 Origo Downloads 即表示您同意此條款。",
     "legal_title": "法律依據",
-    "legal_text": "依據巴西刑法第 184 條第 4 項，個人使用 OmniGet 受到支持。該條文指出，為個人私下使用而製作單一副本，且不以營利為目的，不構成犯罪。但這不代表您可以散布、轉售或將下載內容用於商業用途。著作權法在民事層面仍然適用。",
+    "legal_text": "依據巴西刑法第 184 條第 4 項，個人使用 Origo Downloads 受到支持。該條文指出，為個人私下使用而製作單一副本，且不以營利為目的，不構成犯罪。但這不代表您可以散布、轉售或將下載內容用於商業用途。著作權法在民事層面仍然適用。",
     "responsibility_title": "使用者責任",
-    "responsibility_text": "您 (使用者) 需對使用 OmniGet 以及透過它取得的內容負責。請遵守著作權法與各平台的服務條款，並始終標示原創作者。請勿將其用於任何非法或侵犯他人權利的商業用途。如果用於教育用途，請標註來源。",
+    "responsibility_text": "您 (使用者) 需對使用 Origo Downloads 以及透過它取得的內容負責。請遵守著作權法與各平台的服務條款，並始終標示原創作者。請勿將其用於任何非法或侵犯他人權利的商業用途。如果用於教育用途，請標註來源。",
     "mascot_title": "Loop",
     "mascot_text": "Loop 是 OmniGet 的吉祥物，一個會即時對下載狀態做出反應的小角色。我們希望保護 Loop，因此有幾項規則：您可以自由創作 Loop 的同人作品，但不得將其設計或作品用於商業用途、用於自己的專案，或修改並重新散布專案中的原始作品。",
     "license_title": "授權",
@@ -4573,7 +4582,7 @@
     "feature_themes": "11 個主題：Dark、Light、Catppuccin（4 種風味）、One Dark Pro、Dracula、NyxVamp（3 種變體）",
     "feature_i18n": "提供英文、葡萄牙文、中文、日文、義大利文、法文",
     "feature_tech": "使用 Tauri + Rust 建構，快速且輕量",
-    "roadmap_intro": "以下是 OmniGet 未來版本的開發計畫。",
+    "roadmap_intro": "以下是 Origo Downloads 未來版本的開發計畫。",
     "roadmap_platforms_title": "整合",
     "roadmap_features_title": "功能",
     "roadmap_feature_telegram_multi_account": "Telegram 多帳戶",
@@ -4602,10 +4611,10 @@
     "version": "v{{version}}",
     "by_author": "由 {{author}} 开发",
     "uninstall": "卸载",
-    "restart_required": "重启 OmniGet 以应用更改",
+    "restart_required": "重启 Origo Downloads 以应用更改",
     "browse_loading": "正在加载插件...",
     "browse_error": "无法加载插件列表",
-    "browse_error_hint": "OmniGet 無法連線到外掛註冊表。如果你的網路無法存取 GitHub，請在 設定 → 網路 中設定代理後重試。",
+    "browse_error_hint": "Origo Downloads 無法連線到外掛註冊表。如果你的網路無法存取 GitHub，請在 設定 → 網路 中設定代理後重試。",
     "browse_retry": "重試",
     "install_network_error": "無法連線 GitHub 下載此外掛。請在 設定 → 網路 中設定代理後重試。",
     "browse_empty": "暂无可用插件",
@@ -4626,11 +4635,11 @@
     "plugin_not_installed": "插件未安装",
     "plugin_install_hint": "从 Marketplace 安装此插件即可使用。",
     "go_to_marketplace": "前往 Marketplace",
-    "plugin_restart_hint": "重启 OmniGet 以加载此插件。",
+    "plugin_restart_hint": "重启 Origo Downloads 以加载此插件。",
     "plugin_incompatible_title": "外掛與此版本不相容",
-    "plugin_incompatible_hint": "此外掛是為舊版 OmniGet 建置的,無法載入。請從 Marketplace 重新安裝以取得相容版本——重新啟動無法解決此問題。",
+    "plugin_incompatible_hint": "此外掛是為舊版 Origo Downloads 建置的,無法載入。請從 Marketplace 重新安裝以取得相容版本——重新啟動無法解決此問題。",
     "plugin_load_failed_title": "外掛載入失敗",
-    "plugin_load_failed_hint": "OmniGet 無法載入此外掛。請嘗試從 Marketplace 重新安裝。",
+    "plugin_load_failed_hint": "Origo Downloads 無法載入此外掛。請嘗試從 Marketplace 重新安裝。",
     "plugin_load_error_details": "詳細資訊: {{error}}",
     "reinstall": "重新安裝"
   },
@@ -4691,7 +4700,7 @@
     "empty": "沒有可用的版本說明。"
   },
   "onboarding": {
-    "welcome_title": "歡迎使用 OmniGet",
+    "welcome_title": "歡迎使用 Origo Downloads",
     "welcome_desc": "您的媒體下載好幫手。開源且免費。",
     "next": "下一步",
     "skip": "略過",
@@ -4704,7 +4713,7 @@
     "theme_light": "浅色",
     "theme_dark": "深色",
     "deps_title": "相依元件",
-    "deps_desc": "OmniGet 使用 yt-dlp 與 FFmpeg 下載並處理媒體。",
+    "deps_desc": "Origo Downloads 使用 yt-dlp 與 FFmpeg 下載並處理媒體。",
     "deps_install_all": "全部安裝",
     "deps_ready": "Everything is installed. You're ready to download.",
     "done_title": "設定完成！",
@@ -4855,12 +4864,12 @@
     "drm_protected": "下載的串流受 DRM 保護，無法合併。不支援此內容。",
     "output_missing": "下載已完成，但資料夾中沒有出現檔案（或檔案為空）。請檢查磁碟空間與防毒軟體設定後重試。",
     "course_platform_url": "課程平台無法透過 URL 下載。請開啟課程頁面（需要課程外掛並登入帳號）。",
-    "plugin_outdated": "This plugin is outdated and doesn't support this action. Update it in the Marketplace, then restart OmniGet."
+    "plugin_outdated": "This plugin is outdated and doesn't support this action. Update it in the Marketplace, then restart Origo Downloads."
   },
   "debug": {
     "title": "活動記錄",
     "enable": "活動記錄",
-    "enable_desc": "檢視 OmniGet 在背景執行的操作",
+    "enable_desc": "檢視 Origo Downloads 在背景執行的操作",
     "filter_all": "全部",
     "filter_downloads": "下載",
     "filter_network": "網路",
@@ -4878,7 +4887,7 @@
   "p2p": {
     "send_file": "傳送檔案",
     "send_title": "透過 P2P 傳送檔案",
-    "send_description": "將任何檔案傳送給另一位 OmniGet 使用者。系統會產生分享碼 — 接收者只需貼到輸入欄位即可下載。",
+    "send_description": "將任何檔案傳送給另一位 Origo Downloads 使用者。系統會產生分享碼 — 接收者只需貼到輸入欄位即可下載。",
     "select_file": "選取檔案",
     "share_code": "分享碼",
     "click_to_copy": "點選以複製",
@@ -4982,7 +4991,7 @@
     "refresh": "重新整理",
     "unknown_error": "未知錯誤",
     "captcha_detected": "偵測到 Captcha — 請在登入視窗中完成驗證。",
-    "external_platform_hint": "This course is delivered outside Hotmart Club, so OmniGet cannot download it from here. Open it on the creator's platform; if that platform is Udemy or Kiwify, sign in to it in Courses.",
+    "external_platform_hint": "This course is delivered outside Hotmart Club, so Origo Downloads cannot download it from here. Open it on the creator's platform; if that platform is Udemy or Kiwify, sign in to it in Courses.",
     "open_external": "Open on the platform"
   },
   "torrent": {
@@ -5074,9 +5083,9 @@
       "go_home": "Back"
     },
     "about": {
-      "eyebrow": "omniget · open-source",
+      "eyebrow": "Origo Downloads · open-source",
       "short_pitch": "Open-source on GitHub",
-      "long_pitch": "Studying isn't just PDFs. It's books, podcasts, lessons, scribbled notes in between. omniget bundles all of it — without losing your flow switching windows.",
+      "long_pitch": "Studying isn't just PDFs. It's books, podcasts, lessons, scribbled notes in between. Origo Downloads bundles all of it — without losing your flow switching windows.",
       "cta_github": "See on GitHub"
     },
     "hub": {
@@ -5591,11 +5600,11 @@
       "yt_subtitle": "Import playlists from YouTube and YouTube Music. Streams on demand — no download.",
       "yt_intro": "Paste any YouTube or YouTube Music playlist link. For private playlists (including \"Likes\"), point to the browser you're logged into.",
       "yt_step1_title": "Which browser to pull cookies from?",
-      "yt_step1_desc": "For private playlists and your Library, omniget needs cookies from the browser you're signed into. Without cookies, only public playlists work.",
+      "yt_step1_desc": "For private playlists and your Library, Origo Downloads needs cookies from the browser you're signed into. Without cookies, only public playlists work.",
       "yt_browser_micro": "yt-dlp reads cookies straight from your browser. Nothing leaves your machine — it's all local.",
       "yt_browser_saved": "{{browser}} cookies configured",
       "yt_step2_title": "Import a playlist",
-      "yt_step2_desc": "Paste the link, omniget imports the track list. Playback streams on demand — nothing is downloaded.",
+      "yt_step2_desc": "Paste the link, Origo Downloads imports the track list. Playback streams on demand — nothing is downloaded.",
       "yt_import": "Import",
       "yt_imported": "{{title}}: {{count}} tracks imported",
       "yt_lm_label": "Likes (Liked Music)",
@@ -5615,7 +5624,7 @@
       "yt_download_started": "Download started",
       "sc_title": "SoundCloud",
       "sc_signin_heading": "Connect to SoundCloud",
-      "sc_signin_body": "Sign in to SoundCloud in your browser — the OmniGet extension grabs the cookies automatically. Then come back and refresh.",
+      "sc_signin_body": "Sign in to SoundCloud in your browser — the Origo Downloads extension grabs the cookies automatically. Then come back and refresh.",
       "sc_open_in_browser": "Open SoundCloud in browser",
       "sc_already_signed_in": "I'm signed in, refresh",
       "sc_search": "Search",
@@ -5686,11 +5695,11 @@
       "yt_sync_playlists": "Fetching {{total}} playlists…",
       "yt_sync_done": "Synced: {{playlists}} playlists, {{tracks}} tracks",
       "yt_ext_import": "Import from extension",
-      "yt_ext_hint": "Pulls YouTube cookies straight from the omniget browser extension. No F12, no copy-paste.",
+      "yt_ext_hint": "Pulls YouTube cookies straight from the Origo Downloads browser extension. No F12, no copy-paste.",
       "yt_ext_imported": "{{count}} cookies imported from extension",
-      "yt_ext_empty": "No cookies captured yet. Open music.youtube.com in your browser with the omniget extension active, then try again.",
+      "yt_ext_empty": "No cookies captured yet. Open music.youtube.com in your browser with the Origo Downloads extension active, then try again.",
       "yt_ext_no_sapisid": "Cookies found but no __Secure-3PAPISID. Sign in to YouTube Music and try again.",
-      "yt_ext_no_file": "Cookie file doesn't exist. Extension never sent anything — check: (1) omniget host running, (2) extension active, (3) Native Messaging registered. Expected at: {{path}}",
+      "yt_ext_no_file": "Cookie file doesn't exist. Extension never sent anything — check: (1) Origo Downloads host running, (2) extension active, (3) Native Messaging registered. Expected at: {{path}}",
       "yt_ext_no_youtube": "File exists ({{age}}) but only has cookies for: {{domains}}. Open music.youtube.com in browser, wait 3s, try again.",
       "yt_ext_no_sapisid_detail": "{{count}} cookies imported ({{age}}) but none is __Secure-3PAPISID. Sign in to YouTube Music.",
       "yt_ext_imported_detail": "{{count}} cookies imported ({{age}})",
@@ -5717,7 +5726,7 @@
       "sources_title": "Music sources",
       "sources_short": "Sources",
       "sources_subtitle": "Where to look for tracks",
-      "sources_intro": "When you ask omniget to fetch a song by name, it tries these sources in order. Drag with arrows to reorder.",
+      "sources_intro": "When you ask Origo Downloads to fetch a song by name, it tries these sources in order. Drag with arrows to reorder.",
       "source_status_connected": "Connected",
       "source_status_not_connected": "Not connected",
       "source_status_unavailable": "Coming soon",
@@ -5734,7 +5743,7 @@
       "qobuz_password_label": "Password",
       "qobuz_pwd_show": "Show password",
       "qobuz_pwd_hide": "Hide password",
-      "qobuz_privacy": "Stored locally on your device only. Never sent to omniget servers.",
+      "qobuz_privacy": "Stored locally on your device only. Never sent to Origo Downloads servers.",
       "qobuz_connect": "Connect",
       "qobuz_connecting": "Connecting…",
       "qobuz_connected": "Connected to Qobuz",
@@ -7077,7 +7086,7 @@
       "detail_progress": "圖表、連續記錄和每週目標正在重建以確保準確性。",
       "detail_achievements": "經驗、徽章和成就樹仍在打磨中。",
       "home_banner_title": "Study 的部分功能正在維護",
-      "home_banner_body": "專注、進度、成就和筆記暫時無法使用，我們正在打磨它們。OmniGet 的其他功能正常運行。"
+      "home_banner_body": "專注、進度、成就和筆記暫時無法使用，我們正在打磨它們。Origo Downloads 的其他功能正常運行。"
     },
     "library_health": {
       "removed_toast": "已移除：{{name}}",
@@ -7268,7 +7277,7 @@
       "test_failed": "無法傳送通知",
       "permission_denied_toast": "系統層級已停用通知。請至作業系統設定中啟用。",
       "permission_denied_banner": "系統通知已停用",
-      "permission_denied_hint": "請至作業系統設定中允許 Omniget 傳送通知，以接收包裹更新。",
+      "permission_denied_hint": "請至作業系統設定中允許 Origo Downloads 傳送通知，以接收包裹更新。",
       "request_permission": "請求權限"
     },
     "notification": {
@@ -7444,7 +7453,7 @@
       "rate_limited": "The server is asking you to slow down. Wait a few seconds and try again.",
       "server": "The server hit an internal error. Try again; if it keeps happening, tell the server owner.",
       "not_connected": "Not connected to this server right now. It reconnects on its own; try again in a moment.",
-      "protocol": "This server speaks a version of the chat protocol this OmniGet does not understand. Update OmniGet, or ask the owner to update the server.",
+      "protocol": "This server speaks a version of the chat protocol this Origo Downloads does not understand. Update Origo Downloads, or ask the owner to update the server.",
       "bad_request": "The server rejected that. Check what you typed and try again.",
       "invalid_credentials": "Wrong username or password. Check both and try again.",
       "username_taken": "That username is already taken on this server. Pick another one.",
@@ -7454,7 +7463,7 @@
       "registration_closed": "This server only accepts new accounts through an invite link. Ask a member for one.",
       "message_too_long": "That message is longer than this server allows.",
       "empty_message": "Type something before sending.",
-      "voice_mic_permission": "OmniGet is not allowed to use the microphone. Allow it in your system's privacy settings, then rejoin.",
+      "voice_mic_permission": "Origo Downloads is not allowed to use the microphone. Allow it in your system's privacy settings, then rejoin.",
       "voice_no_input_device": "No microphone found. Plug one in or pick another in Voice settings. You can still listen.",
       "voice_no_output_device": "No speakers or headphones found. Connect one and rejoin.",
       "voice_device_busy": "Another app is using the audio device. Close it or pick another device in Voice settings.",
@@ -7468,9 +7477,9 @@
       "voice_dm_unsupported": "Voice calls in direct messages are not available yet. Use a voice channel in a server.",
       "voice_not_connected": "You are not in a voice channel.",
       "voice_disconnected": "Voice dropped. Rejoin when you are ready.",
-      "voice_unavailable": "Voice is not available in this build of OmniGet.",
+      "voice_unavailable": "Voice is not available in this build of Origo Downloads.",
       "voice_engine_crashed": "The voice engine crashed and left the call. Rejoin to try again; if it repeats, send us the log from About → Debug.",
-      "screen_permission": "OmniGet needs Screen Recording permission. Open System Settings → Privacy & Security → Screen & System Audio Recording, enable OmniGet, then try again.",
+      "screen_permission": "Origo Downloads needs Screen Recording permission. Open System Settings → Privacy & Security → Screen & System Audio Recording, enable Origo Downloads, then try again.",
       "stream_unsupported": "Screen sharing isn't available on this platform yet.",
       "stream_source_gone": "That screen or window is no longer available. Pick another one.",
       "stream_capture_failed": "Couldn't capture the screen. Try another source or restart the app.",
@@ -7478,7 +7487,7 @@
       "stream_not_streaming": "You aren't sharing your screen right now.",
       "stream_not_found": "That stream isn't available anymore.",
       "stream_viewer_failed": "Couldn't open the stream viewer. Try watching again.",
-      "e2ee": "OmniGet could not use encryption for this conversation. Reconnect to the server and try again.",
+      "e2ee": "Origo Downloads could not use encryption for this conversation. Reconnect to the server and try again.",
       "e2ee_not_ready": "Encryption is not set up yet — the other side has to open OmniDisc once. Your message was not sent.",
       "upload_too_large": "That file is bigger than this server accepts.",
       "upload_failed": "The upload did not finish. Check your connection and try again.",
@@ -7486,12 +7495,12 @@
       "unknown_upload": "That attachment is no longer ready. Attach it again.",
       "attachment_corrupt": "This file did not survive the trip — its contents do not match what the sender signed. It was not saved.",
       "too_many_attachments": "You can attach up to 10 files to one message.",
-      "file_missing": "OmniGet could not read that file. It may have moved or been deleted.",
+      "file_missing": "Origo Downloads could not read that file. It may have moved or been deleted.",
       "device_required": "This server needs the app to register a device before encrypting. Reconnect and try again.",
       "epoch_conflict": "Someone changed this conversation while your message was going out. Try sending it again.",
-      "voice_output_permission": "OmniGet is not allowed to use the audio output. Allow it in your system's privacy settings, then rejoin.",
-      "e2ee_untrusted": "伺服器回傳了一台此人從未公布過的裝置。OmniGet 選擇中止而不是向它加密，什麼都沒有送出。請告知該伺服器的管理員。",
-      "attachment_origin": "這個附件指向這個伺服器之外的位置，OmniGet 沒有下載。",
+      "voice_output_permission": "Origo Downloads is not allowed to use the audio output. Allow it in your system's privacy settings, then rejoin.",
+      "e2ee_untrusted": "伺服器回傳了一台此人從未公布過的裝置。Origo Downloads 選擇中止而不是向它加密，什麼都沒有送出。請告知該伺服器的管理員。",
+      "attachment_origin": "這個附件指向這個伺服器之外的位置，Origo Downloads 沒有下載。",
       "attachment_too_large": "這個附件持續傳送超過它宣稱的大小，下載已中止。"
     },
     "guild": {
@@ -7569,7 +7578,7 @@
       "mic_test_stop": "Stop test",
       "mic_test_hint": "Speak normally — the bar should move. Nothing is sent anywhere.",
       "mic_level": "Microphone level",
-      "mic_silent": "No sound detected. Check the microphone is plugged in and that OmniGet is allowed to use it.",
+      "mic_silent": "No sound detected. Check the microphone is plugged in and that Origo Downloads is allowed to use it.",
       "noise_suppression": "Noise suppression",
       "noise_suppression_desc": "Filters fans, keyboards and background hum before your voice is sent. On by default; turn off for music.",
       "ptt_key": "Push-to-talk key",
@@ -7577,7 +7586,7 @@
       "ptt_record": "Record",
       "ptt_recording": "Press a key combination…",
       "ptt_clear": "Use voice activity instead",
-      "ptt_permission_hint": "On macOS a global key needs Accessibility permission: System Settings → Privacy & Security → Accessibility → OmniGet.",
+      "ptt_permission_hint": "On macOS a global key needs Accessibility permission: System Settings → Privacy & Security → Accessibility → Origo Downloads.",
       "ptt_conflict_hint": "Another application already claimed this combination. Record a different one, or close the app that owns it.",
       "ptt_refused": "The system did not hand this key over, so push-to-talk will not respond.",
       "vad_threshold": "Voice sensitivity",
@@ -8033,7 +8042,7 @@
       "encrypted_note": "Encrypted — save it to open it",
       "too_large": "That file is bigger than this server accepts ({{limit}}).",
       "too_many": "You can attach up to {{count}} files to one message.",
-      "unreadable": "OmniGet could not read that file.",
+      "unreadable": "Origo Downloads could not read that file.",
       "expires_in": "expires in {{minutes}} min",
       "expired": "This file expired and was deleted from the server."
     },
@@ -8061,7 +8070,7 @@
       "fingerprint_hint": "Read this out to your friend over a call. If your codes match, nobody is in the middle.",
       "copy": "Copy the fingerprint",
       "copied": "Copied",
-      "copy_failed": "OmniGet could not reach the clipboard.",
+      "copy_failed": "Origo Downloads could not reach the clipboard.",
       "revoke": "Remove",
       "revoke_title": "Remove {{device}}?",
       "revoke_body": "That device stops receiving new encrypted messages. Messages it already has stay on it.",

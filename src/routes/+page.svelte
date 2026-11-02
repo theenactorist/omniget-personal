@@ -13,8 +13,6 @@
   import MediaPreview from "$components/omnibox/MediaPreview.svelte";
   import BatchDownload from "$components/omnibox/BatchDownload.svelte";
   import SearchResults from "$components/omnibox/SearchResults.svelte";
-  import P2pSendDialog from "$components/p2p/P2pSendDialog.svelte";
-  import P2pReceiveDialog from "$components/p2p/P2pReceiveDialog.svelte";
   import HomeHero from "$components/home/HomeHero.svelte";
   import HomeUrlBar from "$components/home/HomeUrlBar.svelte";
   import HomeInspector from "$components/home/HomeInspector.svelte";
@@ -38,7 +36,7 @@
   import { t } from "$lib/i18n";
   import { translateBackendError } from "$lib/error-translate";
   import { platformDisplayName } from "$lib/platform-display-names";
-  import { STUDY_MAINTENANCE_NOTICE } from "$lib/study-feature-flags";
+  import { isUnavailablePlatform } from "$lib/personal-build-policy";
 
   type DownloadStarted = {
     id: number;
@@ -60,10 +58,6 @@
     has_audio: boolean;
     format_note: string | null;
   };
-
-  // Platforms whose content is downloaded via the Courses page (courses
-  // plugin + logged-in account), not from a pasted URL.
-  const COURSE_PLATFORMS = new Set(["hotmart", "udemy"]);
 
   let url = $state(getOmniboxDraftUrl());
   let homeInputMode = $state<HomeInputMode>("url");
@@ -114,31 +108,10 @@
   let selectedCookieSlug = $state<string | null>(null);
   let cookieHint = $state<"stale" | "expired" | null>(null);
   let advancedMode = $state(false);
-  const STUDY_NOTICE_DISMISS_KEY = "omniget.study_maintenance_notice_dismissed_v1";
-  let studyNoticeDismissed = $state(
-    typeof localStorage !== "undefined"
-      && localStorage.getItem(STUDY_NOTICE_DISMISS_KEY) === "1"
-  );
-  function dismissStudyNotice() {
-    studyNoticeDismissed = true;
-    try { localStorage.setItem(STUDY_NOTICE_DISMISS_KEY, "1"); } catch {}
-  }
   let mediaPreview = $derived(getMediaPreview());
   let dlStats = $derived(getDownloadStats());
-  let coursesPluginInstalled = $state<boolean | null>(null);
-
-  onMount(() => {
-    invoke<{ id: string; enabled: boolean }[]>("list_plugins")
-      .then((plugins) => {
-        coursesPluginInstalled = plugins.some((p) => p.id === "courses" && p.enabled);
-      })
-      .catch(() => {});
-  });
   let pendingExternalPrefill = $derived(getPendingExternalPrefill());
   let previewImageLoading = $state(true);
-  let showP2pSendDialog = $state(false);
-  let p2pReceiveCode = $state<string | null>(null);
-  let p2pReceiveUrl = $state("");
   let externalNotice = $state<ExternalUrlEvent | null>(null);
   let lastExternalPrefillId = $state<number | null>(null);
   let pendingAutoDownload = $state(false);
@@ -171,7 +144,7 @@
     if (!pendingAutoDownload) return;
     if (omniState.kind === "detected") {
       const info = omniState.info;
-      if (COURSE_PLATFORMS.has(info.platform) || info.platform === "p2p") {
+      if (isUnavailablePlatform(info.platform)) {
         pendingAutoDownload = false;
         return;
       }
@@ -441,11 +414,9 @@
   async function detectPlatform(value: string) {
     try {
       const result = await invoke<PlatformInfo>("detect_platform", { url: value });
-      if (result.supported) {
+      if (result.supported && !isUnavailablePlatform(result.platform)) {
         omniState = { kind: "detected", info: result };
-        if (!COURSE_PLATFORMS.has(result.platform)) {
-          invoke("prefetch_media_info", { url: value }).catch(() => {});
-        }
+        invoke("prefetch_media_info", { url: value }).catch(() => {});
         loadCookieAccounts(value);
         if (result.content_type === "playlist") {
           loadPlaylistEntries(value);
@@ -669,17 +640,8 @@
   async function handleAction() {
     if (omniState.kind !== "detected") return;
     const info = omniState.info;
-
-    if (COURSE_PLATFORMS.has(info.platform)) {
-      goto(`/courses/${encodeURIComponent(info.platform)}`);
-      return;
-    }
-
-    if (info.platform === "p2p") {
-      const trimmed = url.trim();
-      const code = trimmed.replace(/^p2p:/, "");
-      p2pReceiveUrl = trimmed;
-      p2pReceiveCode = code;
+    if (isUnavailablePlatform(info.platform)) {
+      omniState = { kind: "unsupported" };
       return;
     }
 
@@ -858,48 +820,6 @@
     detectPlatform(url.trim());
   }
 
-  async function handleP2pAccept() {
-    const currentUrl = p2pReceiveUrl;
-    p2pReceiveCode = null;
-    p2pReceiveUrl = "";
-
-    const settings = getSettings();
-    let outputDir = settings?.download.default_output_dir ?? "";
-
-    if ((settings?.download.always_ask_path && !settings?.download.auto_download_on_paste) || !outputDir) {
-      const selected = await open({
-        directory: true,
-        title: $t("settings.download.default_output_dir"),
-      });
-      if (!selected) return;
-      outputDir = selected;
-    }
-
-    omniState = { kind: "preparing", platform: "p2p" };
-    url = "";
-
-    try {
-      await invoke("download_from_url", {
-        url: currentUrl,
-        outputDir,
-        downloadMode: null,
-        quality: "best",
-        formatId: null,
-        referer: null,
-        cookieSlug: null,
-      });
-      omniState = { kind: "idle" };
-    } catch (e: any) {
-      const msg = typeof e === "string" ? e : e.message ?? $t("omnibox.error");
-      omniState = { kind: "error", message: msg, originalUrl: currentUrl, platform: "p2p" };
-    }
-  }
-
-  function handleP2pReject() {
-    p2pReceiveCode = null;
-    p2pReceiveUrl = "";
-  }
-
   async function openTorrentFile() {
     const selected = await open({
       title: "Select .torrent file",
@@ -939,13 +859,10 @@
   }
 
   function handleHomeModeChange(mode: HomeInputMode) {
-    // batch/torrent/p2p are momentary actions, not persistent input modes:
+    // Batch and torrent actions return to the URL field after the picker closes.
     // return to "url" so the tab bar never strands on an empty state when
     // the picker/dialog is cancelled
-    if (mode === "p2p") {
-      showP2pSendDialog = true;
-      homeInputMode = "url";
-    } else if (mode === "torrent") {
+    if (mode === "torrent") {
       void openTorrentFile().finally(() => {
         homeInputMode = "url";
       });
@@ -964,25 +881,6 @@
 </script>
 
 <div class="home-mac" class:home-mac--stage={isStage}>
-  {#if STUDY_MAINTENANCE_NOTICE && !studyNoticeDismissed}
-    <div class="study-maintenance-banner" role="status">
-      <div class="study-maintenance-text">
-        <strong>{$t("study.maintenance.home_banner_title")}</strong>
-        <span>{$t("study.maintenance.home_banner_body")}</span>
-      </div>
-      <button
-        type="button"
-        class="study-maintenance-dismiss"
-        onclick={dismissStudyNotice}
-        aria-label={$t('common.close')}
-      >
-        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M18 6L6 18M6 6l12 12" />
-        </svg>
-      </button>
-    </div>
-  {/if}
-
   {#if isStage}
     <div class="home-stage">
       <HomeHero emotion={mascotEmotion} stage celebrate={mascotEmotion === "amazed"} />
@@ -1184,15 +1082,6 @@
             <button type="button" class="cookie-hint-link" onclick={() => goto("/settings?tab=cookies")}>{$t("omnibox.cookie_hint_action")}</button>
           </p>
         {/if}
-        {#if COURSE_PLATFORMS.has(omniState.info.platform)}
-          {#if coursesPluginInstalled === false}
-            <p class="course-upsell">{$t('omnibox.courses_plugin_needed')}</p>
-            <button class="download-primary-btn" onclick={() => goto("/marketplace")}>{$t('omnibox.install_courses_plugin')}</button>
-          {:else}
-            <p class="course-upsell">{$t('omnibox.courses_plugin_ready')}</p>
-            <button class="download-primary-btn" onclick={handleAction}>{$t(omniState.info.platform === "udemy" ? 'omnibox.go_to_udemy' : 'omnibox.go_to_hotmart')}</button>
-          {/if}
-        {:else}
           {@const playlistBlocked = omniState.info.content_type === "playlist" && playlistEntries.length > 0 && selectedPlaylistItems.size === 0}
           {@const torrentBlocked = torrentEntries.length > 0 && selectedTorrentFiles.size === 0}
           {#if omniState.info.platform === "bilibili"}
@@ -1265,7 +1154,6 @@
               </div>
             </details>
           {/if}
-        {/if}
       {:else if omniState.kind === "preparing"}
         <div class="feedback-card feedback-enter">
           <div class="card-row">
@@ -1289,18 +1177,6 @@
   </div>
   {/if}
 
-  {#if showP2pSendDialog}
-    <P2pSendDialog onClose={() => { showP2pSendDialog = false; }} />
-  {/if}
-
-  {#if p2pReceiveCode}
-    <P2pReceiveDialog
-      code={p2pReceiveCode}
-      onAccept={handleP2pAccept}
-      onReject={handleP2pReject}
-    />
-  {/if}
-
   <div class="terms-note">
     {$t('terms_note.agreement')}
     <a href="/about/terms" class="terms-link">{$t('terms_note.link')}</a>
@@ -1310,61 +1186,6 @@
 <style>
   .home-mac {
     width: 100%;
-  }
-
-  .study-maintenance-banner {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    width: 100%;
-    max-width: 640px;
-    margin: var(--space-3) auto 0;
-    padding: var(--space-2) var(--space-2) var(--space-2) var(--space-3);
-    background: color-mix(in srgb, var(--warning) 9%, transparent);
-    box-shadow: inset 0 0 0 var(--hairline) color-mix(in srgb, var(--warning) 22%, transparent);
-    border-radius: var(--radius-lg);
-    color: var(--text-muted);
-    font-size: var(--text-sm);
-    line-height: 1.4;
-  }
-
-  .study-maintenance-text {
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-    flex: 1;
-    min-width: 0;
-  }
-
-  .study-maintenance-text strong {
-    font-weight: 600;
-    font-size: var(--text-sm);
-    color: var(--text);
-  }
-
-  .study-maintenance-text span {
-    color: var(--text-dim);
-    font-size: var(--text-sm);
-  }
-
-  .study-maintenance-dismiss {
-    background: transparent;
-    border: none;
-    width: 24px;
-    height: 24px;
-    border-radius: var(--radius-sm);
-    color: var(--text-dim);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out);
-  }
-
-  .study-maintenance-dismiss:hover {
-    color: var(--text);
-    background: var(--fill-2);
   }
 
   .batch-options {
@@ -1728,13 +1549,6 @@
     width: auto;
     flex: 0 1 auto;
     min-width: 5.4em;
-  }
-
-  .course-upsell {
-    margin: 0;
-    font-size: var(--text-base);
-    line-height: var(--leading-base);
-    color: var(--text-muted);
   }
 
   .cookie-hint {

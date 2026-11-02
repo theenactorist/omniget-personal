@@ -126,7 +126,7 @@ export async function loginToX(): Promise<boolean> {
     session: false,
     expirationDate: Math.floor(Date.now() / 1000) + 3600 * 24 * 365,
   }));
-  await invoke("cookies_import", { request: { content: JSON.stringify(payload), source_url: "https://x.com", source_label: "OmniGet login", alias: null } });
+  await invoke("cookies_import", { request: { content: JSON.stringify(payload), source_url: "https://x.com", source_label: "Origo Downloads login", alias: null } });
   return true;
 }
 

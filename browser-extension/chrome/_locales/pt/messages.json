@@ -1,51 +1,51 @@
 {
   "action_title_supported": {
-    "message": "Enviar esta página de mídia para o OmniGet Personal"
+    "message": "Enviar esta página de mídia para o Origo Downloads"
   },
   "action_title_unsupported": {
     "message": "Nenhuma mídia compatível detectada nesta página"
   },
   "error_page_document_title": {
-    "message": "Extensão OmniGet Personal"
+    "message": "Extensão Origo Downloads"
   },
   "error_page_eyebrow": {
-    "message": "Extensão OmniGet Personal"
+    "message": "Extensão Origo Downloads"
   },
   "error_page_install_cta": {
-    "message": "Instalar OmniGet Personal"
+    "message": "Instalar Origo Downloads"
   },
   "error_page_open_extensions": {
     "message": "Abrir configurações da extensão"
   },
   "error_host_missing_title": {
-    "message": "Abra o OmniGet Personal uma vez para concluir a configuração"
+    "message": "Abra o Origo Downloads uma vez para concluir a configuração"
   },
   "error_host_missing_body": {
-    "message": "O navegador ainda não conseguiu encontrar a ponte do OmniGet Personal neste computador."
+    "message": "O navegador ainda não conseguiu encontrar a ponte do Origo Downloads neste computador."
   },
   "error_host_missing_detail": {
-    "message": "Instale o OmniGet Personal se necessário, depois abra o aplicativo de desktop uma vez e clique novamente na extensão."
+    "message": "Instale o Origo Downloads se necessário, depois abra o aplicativo de desktop uma vez e clique novamente na extensão."
   },
   "error_invalid_url_title": {
-    "message": "A URL desta página não pode ser enviada ao OmniGet Personal"
+    "message": "A URL desta página não pode ser enviada ao Origo Downloads"
   },
   "error_invalid_url_body": {
-    "message": "A página atual não é uma página de mídia compatível com a extensão OmniGet Personal."
+    "message": "A página atual não é uma página de mídia compatível com a extensão Origo Downloads."
   },
   "error_invalid_url_detail": {
     "message": "Tente novamente a partir de uma página direta de vídeo, reel, publicação, playlist ou curso."
   },
   "error_launch_failed_title": {
-    "message": "O OmniGet Personal não pôde ser iniciado pelo navegador"
+    "message": "O Origo Downloads não pôde ser iniciado pelo navegador"
   },
   "error_launch_failed_body": {
     "message": "A extensão falou com o host nativo, mas o aplicativo de desktop não iniciou corretamente."
   },
   "error_launch_failed_detail": {
-    "message": "Verifique se o OmniGet Personal está instalado e não foi bloqueado pelo sistema, depois tente novamente."
+    "message": "Verifique se o Origo Downloads está instalado e não foi bloqueado pelo sistema, depois tente novamente."
   },
   "popup_send_default": {
-    "message": "Enviar para o OmniGet Personal"
+    "message": "Enviar para o Origo Downloads"
   },
   "popup_send_audio": {
     "message": "Enviar áudio"
@@ -148,46 +148,46 @@
     }
   },
   "popup_not_running": {
-    "message": "O OmniGet Personal não está em execução"
+    "message": "O Origo Downloads não está em execução"
   },
   "popup_try_again": {
     "message": "Tentar de novo"
   },
   "popup_get_app": {
-    "message": "Obter o OmniGet Personal"
+    "message": "Obter o Origo Downloads"
   },
   "popup_lbl_course": {
-    "message": "Enviar curso para o OmniGet Personal"
+    "message": "Enviar curso para o Origo Downloads"
   },
   "popup_lbl_playlist": {
-    "message": "Enviar playlist para o OmniGet Personal"
+    "message": "Enviar playlist para o Origo Downloads"
   },
   "popup_lbl_video": {
-    "message": "Enviar vídeo para o OmniGet Personal"
+    "message": "Enviar vídeo para o Origo Downloads"
   },
   "popup_lbl_reel": {
-    "message": "Enviar reel para o OmniGet Personal"
+    "message": "Enviar reel para o Origo Downloads"
   },
   "popup_lbl_post": {
-    "message": "Enviar post para o OmniGet Personal"
+    "message": "Enviar post para o Origo Downloads"
   },
   "popup_lbl_short": {
-    "message": "Enviar short para o OmniGet Personal"
+    "message": "Enviar short para o Origo Downloads"
   },
   "popup_lbl_clip": {
-    "message": "Enviar clipe para o OmniGet Personal"
+    "message": "Enviar clipe para o Origo Downloads"
   },
   "popup_lbl_image": {
-    "message": "Enviar imagem para o OmniGet Personal"
+    "message": "Enviar imagem para o Origo Downloads"
   },
   "popup_lbl_audio": {
-    "message": "Enviar áudio para o OmniGet Personal"
+    "message": "Enviar áudio para o Origo Downloads"
   },
   "popup_lbl_profile": {
-    "message": "Enviar perfil para o OmniGet Personal"
+    "message": "Enviar perfil para o Origo Downloads"
   },
   "popup_lbl_page": {
-    "message": "Enviar página para o OmniGet Personal"
+    "message": "Enviar página para o Origo Downloads"
   },
   "popup_ck_saving": {
     "message": "Salvando cookies…"
@@ -215,7 +215,7 @@
     }
   },
   "popup_ck_hint": {
-    "message": "Envia os cookies deste site para o gerenciador de cookies do OmniGet Personal."
+    "message": "Envia os cookies deste site para o gerenciador de cookies do Origo Downloads."
   },
   "popup_ckerr_no_url": {
     "message": "Nenhuma aba ativa"
@@ -233,13 +233,13 @@
     "message": "Sem cookies para este site"
   },
   "popup_ckerr_missing_token": {
-    "message": "Pareie o OmniGet Personal primeiro"
+    "message": "Pareie o Origo Downloads primeiro"
   },
   "popup_ckerr_missing_endpoint": {
-    "message": "OmniGet Personal não detectado"
+    "message": "Origo Downloads não detectado"
   },
   "popup_ckerr_fetch_failed": {
-    "message": "O OmniGet Personal não está em execução"
+    "message": "O Origo Downloads não está em execução"
   },
   "popup_ckerr_unauthorized": {
     "message": "Token de pareamento inválido"

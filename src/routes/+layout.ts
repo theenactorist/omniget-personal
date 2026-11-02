@@ -1,9 +1,12 @@
+import { redirect } from "@sveltejs/kit";
+import { isUnavailableRoute } from "$lib/personal-build-policy";
 import { loadTranslations, defaultLocale } from "$lib/i18n";
 import { loadSettings } from "$lib/stores/settings-store.svelte";
 
 export const ssr = false;
 
 export const load = async ({ url }) => {
+  if (isUnavailableRoute(url.pathname)) redirect(307, "/");
   let lang = defaultLocale;
   try {
     const settings = await loadSettings();

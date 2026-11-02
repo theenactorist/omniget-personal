@@ -2,6 +2,7 @@ use tauri::AppHandle;
 use tauri_plugin_store::StoreExt;
 
 use crate::models::settings::AppSettings;
+use omniget_core::core::personal_policy::normalize_settings;
 
 const STORE_PATH: &str = "settings.json";
 const STORE_KEY: &str = "app_settings";
@@ -20,41 +21,41 @@ fn store_path() -> std::path::PathBuf {
 pub fn load_settings(app: &AppHandle) -> AppSettings {
     let store = match app.store(store_path()) {
         Ok(s) => s,
-        Err(_) => return AppSettings::default(),
+        Err(_) => return normalize_settings(AppSettings::default()),
     };
 
-    match store.get(STORE_KEY) {
+    normalize_settings(match store.get(STORE_KEY) {
         Some(val) => serde_json::from_value::<AppSettings>(val.clone()).unwrap_or_default(),
         None => AppSettings::default(),
-    }
+    })
 }
 
 pub fn load_settings_standalone() -> AppSettings {
     let data_dir = match crate::core::paths::app_data_dir() {
         Some(d) => d,
-        None => return AppSettings::default(),
+        None => return normalize_settings(AppSettings::default()),
     };
 
     let store_path = data_dir.join(STORE_PATH);
     let content = match std::fs::read_to_string(&store_path) {
         Ok(c) => c,
-        Err(_) => return AppSettings::default(),
+        Err(_) => return normalize_settings(AppSettings::default()),
     };
 
     let json: serde_json::Value = match serde_json::from_str(&content) {
         Ok(v) => v,
-        Err(_) => return AppSettings::default(),
+        Err(_) => return normalize_settings(AppSettings::default()),
     };
 
-    match json.get(STORE_KEY) {
+    normalize_settings(match json.get(STORE_KEY) {
         Some(val) => serde_json::from_value::<AppSettings>(val.clone()).unwrap_or_default(),
         None => AppSettings::default(),
-    }
+    })
 }
 
 pub fn save_settings(app: &AppHandle, settings: &AppSettings) -> anyhow::Result<()> {
     let store = app.store(store_path())?;
-    let val = serde_json::to_value(settings)?;
+    let val = serde_json::to_value(normalize_settings(settings.clone()))?;
     store.set(STORE_KEY, val);
     store.save()?;
     Ok(())

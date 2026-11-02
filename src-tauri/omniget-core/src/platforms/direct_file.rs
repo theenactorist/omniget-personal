@@ -43,6 +43,7 @@ fn filename_from_url(url: &str) -> String {
 
 async fn probe_client() -> Option<reqwest::Client> {
     http_client::apply_global_proxy(reqwest::Client::builder())
+        .redirect(crate::core::personal_policy::redirect_policy())
         .timeout(std::time::Duration::from_secs(10))
         .build()
         .ok()
@@ -227,6 +228,7 @@ impl PlatformDownloader for DirectFileDownloader {
         let output_path = opts.output_dir.join(&filename);
 
         let mut builder = http_client::apply_global_proxy(reqwest::Client::builder())
+            .redirect(crate::core::personal_policy::redirect_policy())
             .connect_timeout(std::time::Duration::from_secs(30));
 
         if let Some(ua) = opts.user_agent.as_deref() {

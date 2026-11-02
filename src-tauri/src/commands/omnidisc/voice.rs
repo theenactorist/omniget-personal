@@ -1,8 +1,8 @@
 use super::gateway::{self, ERR_NOT_CONNECTED};
 use super::normalize_instance_url;
 use omnidisc_media::{
-    AudioDevices, AudioPrefs, ConnectOptions, DeviceKind, LiveKitBackend, MediaEngine, NullBackend,
-    RoomKey, VoiceState, VoiceStats,
+    AudioDevices, AudioPrefs, ConnectOptions, DeviceKind, MediaEngine, NullBackend, RoomKey,
+    VoiceState, VoiceStats,
 };
 use omnidisc_proto::gateway::{Opcode, VoiceServerUpdate};
 use serde::Serialize;
@@ -89,20 +89,12 @@ impl Default for VoiceManager {
 
 impl VoiceManager {
     pub fn new() -> Self {
-        let (engine, backend, backend_available) = match LiveKitBackend::new() {
-            Ok(backend) => {
-                let backend = Arc::new(backend);
-                (MediaEngine::new(backend.clone()), Some(backend), true)
-            }
-            Err(e) => {
-                tracing::error!("[omnidisc] voice backend unavailable: {}", e);
-                (MediaEngine::new(Arc::new(NullBackend)), None, false)
-            }
-        };
+        // The removed chat feature must not initialize LiveKit, audio or worker threads.
+        let engine = MediaEngine::new(Arc::new(NullBackend));
         Self {
             engine: Arc::new(engine),
-            backend,
-            backend_available,
+            backend: None,
+            backend_available: false,
             session: Mutex::new(None),
             pending: StdMutex::new(None),
             flags: StdMutex::new(Flags::default()),
@@ -727,6 +719,14 @@ pub async fn omnidisc_voice_status(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn personal_build_voice_has_no_livekit_or_audio_backend() {
+        let voice = VoiceManager::new();
+        assert!(voice.backend.is_none());
+        assert!(!voice.backend_available);
+        assert!(!voice.started.load(Ordering::Relaxed));
+    }
     use omnidisc_proto::Snowflake;
 
     fn update(channel: u64) -> VoiceServerUpdate {

@@ -221,7 +221,7 @@
       <AnkiCard padding="m">
         {#if chosen === "local_folder"}
           <p class="hint">
-            Use uma pasta sincronizada por Dropbox/Google Drive/iCloud Drive. O OmniGet escreve
+            Use uma pasta sincronizada por Dropbox/Google Drive/iCloud Drive. O Origo Downloads escreve
             <code>collection.anki2</code> + <code>media.zip</code> + <code>manifest.json</code>.
           </p>
           <label class="field">

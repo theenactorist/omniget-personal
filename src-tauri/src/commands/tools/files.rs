@@ -78,7 +78,7 @@ pub fn tool_awake_set(active: bool) -> Result<bool, String> {
             .display(true)
             .idle(true)
             .sleep(true)
-            .app_name("OmniGet")
+            .app_name("Origo Downloads")
             .reason("Tools: keep awake")
             .create()
             .map_err(|e| e.to_string())?;

@@ -1,51 +1,51 @@
 {
   "action_title_supported": {
-    "message": "Отправить эту медиа-страницу в OmniGet Personal"
+    "message": "Отправить эту медиа-страницу в Origo Downloads"
   },
   "action_title_unsupported": {
     "message": "На этой странице не обнаружено поддерживаемых медиа"
   },
   "error_page_document_title": {
-    "message": "Расширение OmniGet Personal"
+    "message": "Расширение Origo Downloads"
   },
   "error_page_eyebrow": {
-    "message": "Расширение OmniGet Personal"
+    "message": "Расширение Origo Downloads"
   },
   "error_page_install_cta": {
-    "message": "Установить OmniGet Personal"
+    "message": "Установить Origo Downloads"
   },
   "error_page_open_extensions": {
     "message": "Открыть настройки расширения"
   },
   "error_host_missing_title": {
-    "message": "Запустите OmniGet Personal один раз, чтобы завершить настройку"
+    "message": "Запустите Origo Downloads один раз, чтобы завершить настройку"
   },
   "error_host_missing_body": {
-    "message": "Браузер пока не может найти мост OmniGet Personal на этом компьютере."
+    "message": "Браузер пока не может найти мост Origo Downloads на этом компьютере."
   },
   "error_host_missing_detail": {
-    "message": "Установите OmniGet Personal при необходимости, затем запустите приложение один раз и нажмите на расширение снова."
+    "message": "Установите Origo Downloads при необходимости, затем запустите приложение один раз и нажмите на расширение снова."
   },
   "error_invalid_url_title": {
-    "message": "URL этой страницы нельзя отправить в OmniGet Personal"
+    "message": "URL этой страницы нельзя отправить в Origo Downloads"
   },
   "error_invalid_url_body": {
-    "message": "Текущая страница не является поддерживаемой медиа-страницей для расширения OmniGet Personal."
+    "message": "Текущая страница не является поддерживаемой медиа-страницей для расширения Origo Downloads."
   },
   "error_invalid_url_detail": {
     "message": "Попробуйте снова с прямой страницы видео, рилса, поста, плейлиста или курса."
   },
   "error_launch_failed_title": {
-    "message": "Не удалось запустить OmniGet Personal из браузера"
+    "message": "Не удалось запустить Origo Downloads из браузера"
   },
   "error_launch_failed_body": {
     "message": "Расширение связалось с нативным хостом, но приложение не запустилось корректно."
   },
   "error_launch_failed_detail": {
-    "message": "Проверьте, установлен ли OmniGet Personal и не блокируется ли он вашей системой, затем повторите попытку."
+    "message": "Проверьте, установлен ли Origo Downloads и не блокируется ли он вашей системой, затем повторите попытку."
   },
   "popup_send_default": {
-    "message": "Отправить в OmniGet Personal"
+    "message": "Отправить в Origo Downloads"
   },
   "popup_send_audio": {
     "message": "Отправить аудио"
@@ -148,46 +148,46 @@
     }
   },
   "popup_not_running": {
-    "message": "OmniGet Personal не запущен"
+    "message": "Origo Downloads не запущен"
   },
   "popup_try_again": {
     "message": "Повторить"
   },
   "popup_get_app": {
-    "message": "Скачать OmniGet Personal"
+    "message": "Скачать Origo Downloads"
   },
   "popup_lbl_course": {
-    "message": "Отправить курс в OmniGet Personal"
+    "message": "Отправить курс в Origo Downloads"
   },
   "popup_lbl_playlist": {
-    "message": "Отправить плейлист в OmniGet Personal"
+    "message": "Отправить плейлист в Origo Downloads"
   },
   "popup_lbl_video": {
-    "message": "Отправить видео в OmniGet Personal"
+    "message": "Отправить видео в Origo Downloads"
   },
   "popup_lbl_reel": {
-    "message": "Отправить рилс в OmniGet Personal"
+    "message": "Отправить рилс в Origo Downloads"
   },
   "popup_lbl_post": {
-    "message": "Отправить пост в OmniGet Personal"
+    "message": "Отправить пост в Origo Downloads"
   },
   "popup_lbl_short": {
-    "message": "Отправить короткое видео в OmniGet Personal"
+    "message": "Отправить короткое видео в Origo Downloads"
   },
   "popup_lbl_clip": {
-    "message": "Отправить клип в OmniGet Personal"
+    "message": "Отправить клип в Origo Downloads"
   },
   "popup_lbl_image": {
-    "message": "Отправить изображение в OmniGet Personal"
+    "message": "Отправить изображение в Origo Downloads"
   },
   "popup_lbl_audio": {
-    "message": "Отправить аудио в OmniGet Personal"
+    "message": "Отправить аудио в Origo Downloads"
   },
   "popup_lbl_profile": {
-    "message": "Отправить профиль в OmniGet Personal"
+    "message": "Отправить профиль в Origo Downloads"
   },
   "popup_lbl_page": {
-    "message": "Отправить страницу в OmniGet Personal"
+    "message": "Отправить страницу в Origo Downloads"
   },
   "popup_ck_saving": {
     "message": "Сохранение cookies…"
@@ -215,7 +215,7 @@
     }
   },
   "popup_ck_hint": {
-    "message": "Отправляет cookies этого сайта в менеджер cookies OmniGet Personal."
+    "message": "Отправляет cookies этого сайта в менеджер cookies Origo Downloads."
   },
   "popup_ckerr_no_url": {
     "message": "Нет активной вкладки"
@@ -233,13 +233,13 @@
     "message": "Нет cookies для этого сайта"
   },
   "popup_ckerr_missing_token": {
-    "message": "Сначала свяжите OmniGet Personal"
+    "message": "Сначала свяжите Origo Downloads"
   },
   "popup_ckerr_missing_endpoint": {
-    "message": "OmniGet Personal не обнаружен"
+    "message": "Origo Downloads не обнаружен"
   },
   "popup_ckerr_fetch_failed": {
-    "message": "OmniGet Personal не запущен"
+    "message": "Origo Downloads не запущен"
   },
   "popup_ckerr_unauthorized": {
     "message": "Неверный токен связывания"

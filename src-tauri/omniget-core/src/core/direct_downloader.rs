@@ -63,6 +63,8 @@ pub async fn download_direct_with_headers(
     headers: Option<reqwest::header::HeaderMap>,
     cancel: Option<&CancellationToken>,
 ) -> anyhow::Result<u64> {
+    crate::core::personal_policy::require_url(url).map_err(anyhow::Error::msg)?;
+
     let mut last_err = None;
     // Two independent budgets, both monotonic, so the loop always terminates:
     // `attempt` counts the ordinary retries and `forbidden_retries` counts the

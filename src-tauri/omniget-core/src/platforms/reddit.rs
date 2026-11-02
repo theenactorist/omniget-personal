@@ -45,6 +45,7 @@ impl Default for RedditDownloader {
 impl RedditDownloader {
     pub fn new() -> Self {
         let mut builder = crate::core::http_client::apply_global_proxy(reqwest::Client::builder())
+            .redirect(crate::core::personal_policy::redirect_policy())
             .user_agent(USER_AGENT)
             .timeout(std::time::Duration::from_secs(120))
             .connect_timeout(std::time::Duration::from_secs(15));

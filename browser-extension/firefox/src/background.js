@@ -412,7 +412,7 @@ async function handleSendToApp(msg) {
   }
   return {
     ok: false,
-    error: bridgeResult?.message || schemeResult?.message || "OmniGet is not reachable",
+    error: bridgeResult?.message || schemeResult?.message || "Origo Downloads is not reachable",
     bridgeReason: bridgeResult?.reason,
     schemeReason: schemeResult?.reason,
   };

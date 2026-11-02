@@ -6,46 +6,46 @@
     "message": "このページでは対応しているメディアが見つかりません"
   },
   "error_page_document_title": {
-    "message": "OmniGet Personal 拡張機能"
+    "message": "Origo Downloads 拡張機能"
   },
   "error_page_eyebrow": {
-    "message": "OmniGet Personal 拡張機能"
+    "message": "Origo Downloads 拡張機能"
   },
   "error_page_install_cta": {
-    "message": "OmniGet Personal をインストール"
+    "message": "Origo Downloads をインストール"
   },
   "error_page_open_extensions": {
     "message": "拡張機能の設定を開く"
   },
   "error_host_missing_title": {
-    "message": "セットアップを完了するには OmniGet Personal を一度開いてください"
+    "message": "セットアップを完了するには Origo Downloads を一度開いてください"
   },
   "error_host_missing_body": {
-    "message": "ブラウザはこのコンピューター上の OmniGet Personal ブリッジをまだ見つけられませんでした。"
+    "message": "ブラウザはこのコンピューター上の Origo Downloads ブリッジをまだ見つけられませんでした。"
   },
   "error_host_missing_detail": {
-    "message": "必要なら OmniGet Personal をインストールし、デスクトップアプリを一度起動してからもう一度拡張機能をクリックしてください。"
+    "message": "必要なら Origo Downloads をインストールし、デスクトップアプリを一度起動してからもう一度拡張機能をクリックしてください。"
   },
   "error_invalid_url_title": {
-    "message": "このページの URL は OmniGet Personal に送信できません"
+    "message": "このページの URL は Origo Downloads に送信できません"
   },
   "error_invalid_url_body": {
-    "message": "現在のページは OmniGet Personal 拡張機能でサポートされているメディアページではありません。"
+    "message": "現在のページは Origo Downloads 拡張機能でサポートされているメディアページではありません。"
   },
   "error_invalid_url_detail": {
     "message": "動画、リール、投稿、再生リスト、またはコースの直接ページからもう一度お試しください。"
   },
   "error_launch_failed_title": {
-    "message": "ブラウザから OmniGet Personal を起動できませんでした"
+    "message": "ブラウザから Origo Downloads を起動できませんでした"
   },
   "error_launch_failed_body": {
     "message": "拡張機能はネイティブホストと通信しましたが、デスクトップアプリは正しく起動しませんでした。"
   },
   "error_launch_failed_detail": {
-    "message": "OmniGet Personal がインストールされていてシステムによってブロックされていないことを確認してから、もう一度お試しください。"
+    "message": "Origo Downloads がインストールされていてシステムによってブロックされていないことを確認してから、もう一度お試しください。"
   },
   "popup_send_default": {
-    "message": "OmniGet Personal に送信"
+    "message": "Origo Downloads に送信"
   },
   "popup_send_audio": {
     "message": "音声を送信"
@@ -148,46 +148,46 @@
     }
   },
   "popup_not_running": {
-    "message": "OmniGet Personal が起動していません"
+    "message": "Origo Downloads が起動していません"
   },
   "popup_try_again": {
     "message": "再試行"
   },
   "popup_get_app": {
-    "message": "OmniGet Personal を入手"
+    "message": "Origo Downloads を入手"
   },
   "popup_lbl_course": {
-    "message": "コースを OmniGet Personal に送信"
+    "message": "コースを Origo Downloads に送信"
   },
   "popup_lbl_playlist": {
-    "message": "プレイリストを OmniGet Personal に送信"
+    "message": "プレイリストを Origo Downloads に送信"
   },
   "popup_lbl_video": {
-    "message": "動画を OmniGet Personal に送信"
+    "message": "動画を Origo Downloads に送信"
   },
   "popup_lbl_reel": {
-    "message": "リールを OmniGet Personal に送信"
+    "message": "リールを Origo Downloads に送信"
   },
   "popup_lbl_post": {
-    "message": "投稿を OmniGet Personal に送信"
+    "message": "投稿を Origo Downloads に送信"
   },
   "popup_lbl_short": {
-    "message": "ショートを OmniGet Personal に送信"
+    "message": "ショートを Origo Downloads に送信"
   },
   "popup_lbl_clip": {
-    "message": "クリップを OmniGet Personal に送信"
+    "message": "クリップを Origo Downloads に送信"
   },
   "popup_lbl_image": {
-    "message": "画像を OmniGet Personal に送信"
+    "message": "画像を Origo Downloads に送信"
   },
   "popup_lbl_audio": {
-    "message": "音声を OmniGet Personal に送信"
+    "message": "音声を Origo Downloads に送信"
   },
   "popup_lbl_profile": {
-    "message": "プロフィールを OmniGet Personal に送信"
+    "message": "プロフィールを Origo Downloads に送信"
   },
   "popup_lbl_page": {
-    "message": "ページを OmniGet Personal に送信"
+    "message": "ページを Origo Downloads に送信"
   },
   "popup_ck_saving": {
     "message": "クッキーを保存中…"
@@ -215,7 +215,7 @@
     }
   },
   "popup_ck_hint": {
-    "message": "このサイトのクッキーを OmniGet Personal のクッキーマネージャーに送信します。"
+    "message": "このサイトのクッキーを Origo Downloads のクッキーマネージャーに送信します。"
   },
   "popup_ckerr_no_url": {
     "message": "アクティブなタブがありません"
@@ -233,13 +233,13 @@
     "message": "このサイトのクッキーがありません"
   },
   "popup_ckerr_missing_token": {
-    "message": "先に OmniGet Personal をペアリングしてください"
+    "message": "先に Origo Downloads をペアリングしてください"
   },
   "popup_ckerr_missing_endpoint": {
-    "message": "OmniGet Personal が見つかりません"
+    "message": "Origo Downloads が見つかりません"
   },
   "popup_ckerr_fetch_failed": {
-    "message": "OmniGet Personal が起動していません"
+    "message": "Origo Downloads が起動していません"
   },
   "popup_ckerr_unauthorized": {
     "message": "ペアリングトークンが無効です"

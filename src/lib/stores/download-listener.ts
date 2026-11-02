@@ -1,4 +1,5 @@
 import { listen } from "@tauri-apps/api/event";
+import { invoke } from "@tauri-apps/api/core";
 import { get } from "svelte/store";
 import { t } from "$lib/i18n";
 import {
@@ -299,9 +300,32 @@ export async function initDownloadListener(): Promise<() => void> {
         } else if (item.status.type === "Complete") {
           loggedQueueTerminal.add(item.id);
           queueToastEligibleIds.delete(item.id);
+          if ((item.status.data as { success?: boolean } | null | undefined)?.success === false) {
+            addLog("error", "download", `Download failed: ${item.title}`);
+            continue;
+          }
           addLog("info", "download", `Download complete: ${item.title}`, item.file_path ?? undefined);
           const tr = get(t);
-          showToast("success", tr("toast.generic_download_complete", { name: item.title }));
+          const savedPath = item.file_path?.trim() ? item.file_path : null;
+          showToast("success", tr("toast.generic_download_complete", { name: item.title }), {
+            duration: 10_000,
+            detail: savedPath
+              ? tr("downloads.saved_to_path", { path: savedPath })
+              : tr("downloads.saved_location_unavailable"),
+            action: savedPath ? {
+              label: tr("downloads.open_folder"),
+              onClick: async () => {
+                try {
+                  await invoke("reveal_file", { path: savedPath });
+                } catch (error) {
+                  const message = typeof error === "string"
+                    ? error
+                    : error instanceof Error ? error.message : get(t)("common.error");
+                  showToast("error", message);
+                }
+              },
+            } : undefined,
+          });
           void notifyComplete(item.title);
           recordDownloadComplete(item.file_size_bytes ?? 0);
           void rpcSyncIdleStats();

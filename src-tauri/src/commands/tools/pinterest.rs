@@ -557,7 +557,7 @@ async fn write_outputs(
     if gallery {
         let p = dest.join("index.html");
         let sub = format!(
-            "{} pins · OmniGet · {}",
+            "{} pins · Origo Downloads · {}",
             pins.len(),
             chrono::Local::now().format("%Y-%m-%d %H:%M")
         );
@@ -1115,7 +1115,7 @@ pub async fn tool_pin_export(
                 files = f;
             }
             let sub = format!(
-                "{} pins · OmniGet · {}",
+                "{} pins · Origo Downloads · {}",
                 pins.len(),
                 chrono::Local::now().format("%Y-%m-%d %H:%M")
             );

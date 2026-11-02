@@ -1,82 +1,107 @@
-# Personal build notes
+# Origo Downloads: personal desktop build
 
-## Prerequisites
+Current source version: **0.9.6**. The verified platform for this project is
+Apple Silicon macOS. This document describes the desktop source; it does not
+include private installation records or downloaded media.
 
-The verified target is Apple Silicon macOS. The original build used Node 22.17.1,
-Rust 1.97.0 (pinned in `rust-toolchain.toml`), and Apple's Command Line Tools. Native
-plugin compatibility requires the same Rust compiler fingerprint as the plugin.
-Use an Apple SDK/toolchain that can build the Swift dependencies.
+## Prerequisites and build entry points
 
-With Node, npm, Rust/rustup and Apple build tools available, the source's build
-entry points are:
+Use Node.js, npm, Rust/rustup, and an Apple SDK/toolchain able to compile the Swift
+dependencies. Rust remains pinned to **1.97.0** in `rust-toolchain.toml` for
+reproducibility. Native plugins remain disabled even though their host interfaces
+and dependency source are retained.
+
+From the repository root:
 
 ```sh
 npm ci --ignore-scripts
 npm run check
 npm test
+node --test browser-extension/chrome/tests/*.test.mjs
 npm run tauri -- build --bundles app --no-sign --target aarch64-apple-darwin -- --locked
 codesign --force --deep --sign - --entitlements src-tauri/Entitlements.plist \
-  "src-tauri/target/aarch64-apple-darwin/release/bundle/macos/OmniGet Personal.app"
+  "src-tauri/target/aarch64-apple-darwin/release/bundle/macos/Origo Downloads.app"
 ```
 
-The application bundle is written under
+The output lives under
 `src-tauri/target/aarch64-apple-darwin/release/bundle/macos/`.
-These commands are entry points, not a claim of a clean-machine rebuild test.
+These are build entry points, not a claim that every clean machine has been tested.
+Ad-hoc signing is for a personal local build; it is not Apple notarization.
 
-## Apple toolchain compatibility
+The source-level Apple Metal compatibility fix is retained in
+`vendor/apple-metal`: SDK detection guards macOS 26 sampler properties when an
+older SDK is used. Upstream vendor licenses are retained. The original build
+environment also used local Swift module-cache/manifest workarounds and a Swift
+compatibility-library search path. These machine-specific caches and toolchain
+copies are not part of this repository; do not copy another machine's caches.
+The local release uses matching Command Line Tools Swift 6.1.2 and macOS SDK
+15.5, selected through process-local `DEVELOPER_DIR` and `SDKROOT`. If using a
+compiler wrapper, keep its SDK on the same toolchain; a newer global Xcode
+selection must not supply an incompatible SDK. Global Xcode settings need not
+be changed.
 
-The original Mac had Swift 6.1.2 and SDK 15.5. Its Command Line Tools included stale
-private Swift interfaces and a duplicate obsolete Swift module map. The successful
-local build used project-local copies/overlays to omit those stale files, with
-`SWIFTPM_CUSTOM_LIBS_DIR`, `CLANG_MODULE_CACHE_PATH`, and
-`SWIFTPM_MODULECACHE_OVERRIDE` pointing to local build caches. The final linker
-also needed `LIBRARY_PATH` to include
-`/Library/Developer/CommandLineTools/usr/lib/swift/macosx`, because a dependency
-assumed a full Xcode directory layout. None of the system toolchain files were modified.
-Those machine-specific cache copies are not included in this repository.
+## Preserve application identity during installation
 
-The source-level fix is retained in `vendor/apple-metal`: the build detects the
-SDK and compiles macOS 26 sampler properties only when available. OmniGet's current
-features do not use those properties. Both upstream vendor licenses are retained.
+The visible name changed from OmniGet Personal to Origo Downloads. Keep these
+internal values unchanged when rebuilding or installing an update:
 
-## Plugins and helpers
+- Bundle ID and data-directory identity: `local.omniget.personal`.
+- Executable and Cargo package: `omniget`; library: `omniget_lib`.
+- Deep-link scheme: `omniget-personal://`.
+- Existing browser-extension IDs, protocol identifiers, and pairing keys.
+- Autostart's legacy internal name: `OmniGet Personal`.
 
-The original local installation separately included Courses 1.1.0, Telegram 1.0.2,
-Convert 1.0.3, and Study 0.3.6. All four loaded successfully. These are upstream
-precompiled native plugins; their source was not audited or rebuilt during packaging.
-Study is proprietary. A fresh source checkout does not contain or automatically
-install these plugins; use explicit Marketplace actions to install compatible versions.
+The normal macOS data directory is
+`~/Library/Application Support/local.omniget.personal`. Renaming the app should
+not copy, reset, or delete that directory or its WebKit state. If an existing
+LaunchAgent is configured, its executable path must follow the new installed
+bundle path; do not enable autostart as a side effect of the rename. Renaming the
+bundled extension does not reload or alter an existing browser profile.
 
-The local app used verified official yt-dlp 2026.08.19 plus existing FFmpeg, FFprobe,
-and Node installations. PDFium came from the Study package. Native helpers and
-optional models may be installed when a feature is explicitly requested.
+## Included behavior and disabled components
 
-## Verification completed on the original Mac
+Instagram downloads, retained downloaders, saved-location feedback, and local
+video compression are kept. The WhatsApp preset targets an output below 16 MB
+while preserving the clip's duration. Compression quality depends on duration
+and source complexity; it does not promise the original resolution or quality.
 
-- Apple Silicon release build and strict ad-hoc code-signature verification passed.
-- Frontend: 104 tests passed; type/Svelte check had zero errors and 91 existing warnings.
-- Browser extension: 426 tests passed.
-- Targeted native regressions: four passed (plugin state, URI handling, token pairing).
-- Installed app created its window, loaded all four plugins, and exited cleanly in smoke mode.
-- Bridge health and authorized queue reads succeeded; unauthenticated queue access
-  returned 401; automatic pairing returned 403 without disclosing a token.
-- yt-dlp passed a localhost HTTP download with byte-identical output.
-- The installed GUI opened on its setup screen.
+The 0.9.4 privacy changes remain active in 0.9.6:
 
-Logged-in services, paid features, optional model downloads, and every plugin
-operation were not exercised. No browser extension was installed into an existing
-browser profile during packaging. Export and load the bundled extension manually,
-then copy the endpoint and token from app Settings to its options.
+- Native plugin loading, installation, updates, commands, and frontend access are
+  blocked. Precompiled Courses, Telegram, Convert, and Study binaries are absent.
+- Telegram, Courses, Library, Music, League, chat, P2P, and Marketplace routes and
+  entry points are removed or blocked. Voice workers do not initialize.
+- Discord activity sharing and author-service startup connections are disabled.
+- Known author endpoints are blocked in reviewed URL/redirect paths; app updates
+  are disabled and release notes are bundled locally.
+- Browser-extension pairing is manual, and credential-bearing bridge requests
+  stay on HTTP loopback without redirects. Background cookie collection is off.
 
-## Remaining security limits
+Downloads can still use explicitly configured helpers such as yt-dlp, FFmpeg,
+and FFprobe. Helpers, optional model downloads, and their binaries are not
+included here. Existing native-helper paths must not be redirected into disabled
+plugin directories. Do not restore plugin loading to resolve a dependency error.
 
-This is an ad-hoc signed personal build, not an Apple-notarized distribution.
-The upstream disabled CSP and broad local-file asset scope remain. Native plugins
-run with the user's permissions and retain their own dependency-management behavior.
+## Source verification and limitations
 
-Imported cookies, bridge tokens, proxy credentials, and some download headers are
-stored in plaintext under local file permissions. The extension also retains
-pairing and last-download data in browser storage. Software running as the same
-user can access those files. Future Marketplace downloads do not verify signatures
-or checksums; the original packaged asset checks covered only the pinned downloads.
-This is a limited code review and hardening exercise, not a security certification.
+The current source passed 149 frontend tests and 426 extension tests. The
+Svelte/type check found zero errors and 88 existing warnings. Focused regressions
+cover privacy gates, manual pairing, download-location parsing, completion-toast
+deduplication, and reveal failures. The Apple Silicon release build, local code
+signature, installed name/version, existing History display, local bridge
+authentication and disabled-plugin checks also passed. The checked persisted
+state remained byte-identical through installation and launch. This repository
+does not include private runtime records. Instagram and compression were not
+rerun for the display-name change; their implementations remain unchanged.
+
+These controls are not a universal firewall over third-party extractor requests.
+Instagram downloads contact Instagram and its media hosts; local compression
+does not need a remote backend. The upstream disabled CSP and broad local-file
+asset scope remain limitations.
+
+Imported cookies, bridge tokens, proxy credentials, and some download headers
+are stored locally under filesystem permissions. The extension retains pairing
+and download state in browser storage. Software running as the same OS user can
+access those files. Never commit those values, settings, histories, or downloaded
+media. This is a limited source review and hardening effort, not a security
+certification.

@@ -259,7 +259,7 @@
 </script>
 
 <section class="study-page">
-  <PageHero title="Importar / Exportar" subtitle="Mover dados entre o omniget e outros clientes Anki" />
+  <PageHero title="Importar / Exportar" subtitle="Mover dados entre o Origo Downloads e outros clientes Anki" />
 
   <div class="format-grid">
     <article class="format-card">
@@ -363,7 +363,7 @@
 
       <article class="export-card">
         <h3>.json</h3>
-        <p>Snapshot interno. Importável de volta no omniget com round-trip completo.</p>
+        <p>Snapshot interno. Importável de volta no Origo Downloads com round-trip completo.</p>
         <button
           type="button"
           class="btn-secondary"

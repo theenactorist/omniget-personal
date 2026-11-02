@@ -24,6 +24,7 @@ pub mod media_signature;
 pub mod onnxrt;
 pub mod paths;
 pub mod pdfium;
+pub mod personal_policy;
 pub mod pokemon_names;
 pub mod pot_provider;
 pub mod process;

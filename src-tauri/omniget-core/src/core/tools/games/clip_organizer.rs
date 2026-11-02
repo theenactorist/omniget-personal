@@ -483,6 +483,7 @@ pub async fn run(opts: ClipOptions, progress: ProgressFn) -> anyhow::Result<Clip
                     preset: "veryfast".into(),
                     output_dir: String::new(),
                     suffix: "-menor".into(),
+                    sharing_preset: None,
                 },
                 progress.clone(),
             )

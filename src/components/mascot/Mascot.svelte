@@ -64,7 +64,7 @@
   {#if !errored}
     <img
       src={currentSrc}
-      alt="OmniGet mascot"
+      alt="Loop mascot"
       class="mascot-img"
       class:visible={showCurrent}
       onload={onCurrentLoad}

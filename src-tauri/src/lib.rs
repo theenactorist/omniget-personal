@@ -247,7 +247,6 @@ pub fn run() {
     registry.register(Arc::new(platforms::magnet::MagnetDownloader::new(
         torrent_session.clone(),
     )));
-    registry.register(Arc::new(omniget_core::platforms::P2pDownloader::new()));
     registry.register(Arc::new(
         omniget_core::platforms::DirectFileDownloader::new(),
     ));
@@ -322,10 +321,12 @@ pub fn run() {
         )
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_deep_link::init())
-        .plugin(tauri_plugin_autostart::init(
-            tauri_plugin_autostart::MacosLauncher::LaunchAgent,
-            None,
-        ))
+        .plugin(
+            tauri_plugin_autostart::Builder::new()
+                // Keep the existing LaunchAgent identity across the display-name change.
+                .app_name("OmniGet Personal")
+                .build(),
+        )
         .setup(|app| {
             // A janela principal e criada aqui, e nao pelo `tauri.conf.json`
             // (`"create": false`), porque so daqui da para passar
@@ -386,7 +387,9 @@ pub fn run() {
                     );
                 }
 
-                builder.build()?;
+                builder
+                    .on_navigation(|url| !omniget_core::core::personal_policy::is_author_endpoint(url))
+                    .build()?;
 
                 // A unica prova de que a janela subiu. O CI compila em todas as
                 // plataformas mas nunca abriu o app: foi assim que a #209 passou
@@ -607,7 +610,6 @@ pub fn run() {
             core::channels::init_from_disk();
             core::channel_poller::start(app.handle().clone());
             core::queue::start_scheduler(app.handle().clone());
-            commands::league::start_background(app.handle().clone());
             {
                 let app_handle = app.handle().clone();
                 tauri::async_runtime::spawn(async move {
@@ -664,7 +666,6 @@ pub fn run() {
             }
             tray::setup(app.handle())?;
             hotkey::register_from_settings(app.handle());
-            commands::omnidisc::voice::start(app.handle());
 
             // This personal build must not remove another installation's
             // browser native-messaging manifests.
@@ -715,33 +716,7 @@ pub fn run() {
                     local_bridge::spawn(app_handle).await;
                 });
             }
-            {
-                let plugins_dir = core::paths::app_data_dir()
-                    .unwrap_or_else(|| std::path::PathBuf::from("."))
-                    .join("plugins");
-                let host: std::sync::Arc<dyn omniget_plugin_sdk::PluginHost> = std::sync::Arc::new(
-                    plugin_host::PluginHostImpl::new(app.handle().clone(), plugins_dir),
-                );
-                let plugin_mgr = app
-                    .handle()
-                    .state::<std::sync::Arc<tokio::sync::RwLock<plugin_loader::PluginManager>>>();
-                let mgr_for_plugins = std::sync::Arc::clone(&*plugin_mgr);
-                let app_emit = app.handle().clone();
-                std::thread::Builder::new()
-                    .name("plugins-bootstrap".into())
-                    .spawn(move || {
-                        use tauri::Emitter;
-
-                        // Personal builds load the installed plugin set offline.
-                        // Marketplace installs and updates require an explicit action.
-                        {
-                            let mut mgr = mgr_for_plugins.blocking_write();
-                            mgr.load_all(std::sync::Arc::clone(&host));
-                        }
-                        let _ = app_emit.emit("plugins-changed", ());
-                    })
-                    .ok();
-            }
+            // External native plugins are permanently disabled in this personal build.
 
             std::thread::Builder::new()
                 .name("startup-checks".into())
@@ -790,182 +765,10 @@ pub fn run() {
                 api.prevent_close();
                 let _ = window.hide();
             }
-            tauri::WindowEvent::Destroyed
-                if window.label().starts_with("omnidisc-stream-") =>
-            {
-                commands::omnidisc::stream::on_stream_window_destroyed(
-                    &window.app_handle().clone(),
-                    window.label(),
-                );
-            }
             _ => {}
         })
         .invoke_handler(tauri::generate_handler![
             commands::auth_webview::open_auth_webview,
-            commands::omnidisc::omnidisc_connect,
-            commands::omnidisc::auth::omnidisc_register,
-            commands::omnidisc::auth::omnidisc_login,
-            commands::omnidisc::auth::omnidisc_logout,
-            commands::omnidisc::auth::omnidisc_has_session,
-            commands::omnidisc::api::omnidisc_list_messages,
-            commands::omnidisc::api::omnidisc_send_message,
-            commands::omnidisc::api::omnidisc_edit_message,
-            commands::omnidisc::api::omnidisc_delete_message,
-            commands::omnidisc::api::omnidisc_add_reaction,
-            commands::omnidisc::api::omnidisc_remove_reaction,
-            commands::omnidisc::api::omnidisc_ack,
-            commands::omnidisc::gateway::omnidisc_typing,
-            commands::omnidisc::api::omnidisc_create_guild,
-            commands::omnidisc::api::omnidisc_create_channel,
-            commands::omnidisc::api::omnidisc_create_invite,
-            commands::omnidisc::api::omnidisc_join_invite,
-            commands::omnidisc::api::omnidisc_create_dm,
-            commands::omnidisc::api::omnidisc_update_me,
-            commands::omnidisc::api::omnidisc_get_user,
-            commands::omnidisc::api::omnidisc_get_guild,
-            commands::omnidisc::api::omnidisc_get_me,
-            commands::omnidisc::api::omnidisc_search,
-            commands::omnidisc::api::omnidisc_list_pins,
-            commands::omnidisc::api::omnidisc_pin_message,
-            commands::omnidisc::api::omnidisc_list_relationships,
-            commands::omnidisc::api::omnidisc_add_relationship,
-            commands::omnidisc::api::omnidisc_accept_relationship,
-            commands::omnidisc::api::omnidisc_remove_relationship,
-            commands::omnidisc::api::omnidisc_block_user,
-            commands::omnidisc::api::omnidisc_list_notes,
-            commands::omnidisc::api::omnidisc_put_note,
-            commands::omnidisc::api::omnidisc_update_guild,
-            commands::omnidisc::api::omnidisc_delete_guild,
-            commands::omnidisc::api::omnidisc_leave_guild,
-            commands::omnidisc::api::omnidisc_transfer_guild,
-            commands::omnidisc::api::omnidisc_create_role,
-            commands::omnidisc::api::omnidisc_update_role,
-            commands::omnidisc::api::omnidisc_delete_role,
-            commands::omnidisc::api::omnidisc_set_member_role,
-            commands::omnidisc::api::omnidisc_update_member,
-            commands::omnidisc::api::omnidisc_kick_member,
-            commands::omnidisc::api::omnidisc_ban_member,
-            commands::omnidisc::api::omnidisc_unban_member,
-            commands::omnidisc::api::omnidisc_list_bans,
-            commands::omnidisc::api::omnidisc_audit_log,
-            commands::omnidisc::api::omnidisc_update_channel,
-            commands::omnidisc::api::omnidisc_delete_channel,
-            commands::omnidisc::api::omnidisc_put_overwrite,
-            commands::omnidisc::api::omnidisc_delete_overwrite,
-            commands::omnidisc::api::omnidisc_list_sessions,
-            commands::omnidisc::api::omnidisc_revoke_session,
-            commands::omnidisc::api::omnidisc_revoke_other_sessions,
-            commands::omnidisc::device::omnidisc_device_fingerprint,
-            commands::omnidisc::device::omnidisc_list_user_devices,
-            commands::omnidisc::device::omnidisc_revoke_device,
-            commands::omnidisc::mls::omnidisc_mls_sync,
-            commands::omnidisc::mls::omnidisc_mls_status,
-            commands::omnidisc::mls::omnidisc_mls_recall,
-            commands::omnidisc::mls::omnidisc_mls_device_revoked,
-            commands::omnidisc::upload::omnidisc_instance_limits,
-            commands::omnidisc::upload::omnidisc_stage_file,
-            commands::omnidisc::upload::omnidisc_upload_start,
-            commands::omnidisc::upload::omnidisc_upload_cancel,
-            commands::omnidisc::upload::omnidisc_download_attachment,
-            commands::omnidisc::gateway::omnidisc_gateway_connect,
-            commands::omnidisc::gateway::omnidisc_gateway_disconnect,
-            commands::omnidisc::gateway::omnidisc_gateway_send,
-            commands::omnidisc::gateway::omnidisc_gateway_status,
-            commands::omnidisc::voice::omnidisc_voice_join,
-            commands::omnidisc::voice::omnidisc_voice_leave,
-            commands::omnidisc::voice::omnidisc_voice_set_mute,
-            commands::omnidisc::voice::omnidisc_voice_set_deaf,
-            commands::omnidisc::voice::omnidisc_voice_set_volume,
-            commands::omnidisc::voice::omnidisc_voice_devices,
-            commands::omnidisc::voice::omnidisc_voice_set_device,
-            commands::omnidisc::voice::omnidisc_voice_stats,
-            commands::omnidisc::voice::omnidisc_voice_ptt,
-            commands::omnidisc::voice::omnidisc_voice_status,
-            commands::omnidisc::voice::omnidisc_voice_set_noise_suppression,
-            commands::omnidisc::voice::omnidisc_voice_mic_test,
-            commands::omnidisc::voice::omnidisc_voice_set_ducking,
-            commands::omnidisc::voice::omnidisc_voice_ptt_status,
-            commands::omnidisc::stream::omnidisc_media_capabilities,
-            commands::omnidisc::stream::omnidisc_stream_sources,
-            commands::omnidisc::stream::omnidisc_stream_start,
-            commands::omnidisc::stream::omnidisc_stream_stop,
-            commands::omnidisc::stream::omnidisc_stream_stats,
-            commands::omnidisc::stream::omnidisc_stream_set_volume,
-            commands::omnidisc::stream::omnidisc_stream_set_viewport,
-            commands::omnidisc::stream::omnidisc_stream_watch,
-            commands::omnidisc::stream::omnidisc_stream_unwatch,
-            commands::league::league_status,
-            commands::league::league_get,
-            commands::league::league_install_dir,
-            commands::league::league_set_positions,
-            commands::league::league_end_of_game_stats,
-            commands::league::league_set_icon,
-            commands::league::league_set_profile_background,
-            commands::league::league_set_status,
-            commands::league::league_owned_skins,
-            commands::league::league_summoner,
-            commands::league::league_ranked,
-            commands::league::league_gameflow,
-            commands::league::league_match_detail,
-            commands::league::league_player_history,
-            commands::league::league_perks,
-            commands::league::league_match_history,
-            commands::league::league_accept_ready_check,
-            commands::league::league_auto_accept_set,
-            commands::league::league_auto_accept_get,
-            commands::league::league_lobby_queues,
-            commands::league::league_create_lobby,
-            commands::league::league_start_matchmaking,
-            commands::league::league_stop_matchmaking,
-            commands::league::league_leave_lobby,
-            commands::league::league_play_again,
-            commands::league::league_champ_select_session,
-            commands::league::league_bench_swap,
-            commands::league::league_restart_ux,
-            commands::league::league_reroll,
-            commands::league::league_reroll_keeping_champion,
-            commands::league::league_live_game,
-            commands::league::league_game_players,
-            commands::league::league_player_report,
-            commands::league::league_match_analysis,
-            commands::league::league_live_events,
-            commands::league::league_live_metrics,
-            commands::league::league_search_player,
-            commands::league::league_duos,
-            commands::league::league_jungle_report,
-            commands::league::league_apply_runes,
-            commands::league::league_send_chat,
-            commands::league::league_rune_recommendations,
-            commands::league::league_champion_meta,
-            commands::league::league_champion_tiers,
-            commands::league::league_champion_build,
-            commands::league::league_ability_cooldowns,
-            commands::league::league_spectate,
-            commands::league::league_dodge,
-            commands::league::profile::league_profile_state,
-            commands::league::profile::league_set_chat_rank,
-            commands::league::profile::league_reset_chat_rank,
-            commands::league::profile::league_set_challenge_crystal,
-            commands::league::profile::league_set_chat_icon,
-            commands::league::profile::league_challenges,
-            commands::league::profile::league_set_challenge_prefs,
-            commands::league::profile::league_set_regalia,
-            commands::league::profile::league_friends,
-            commands::league::profile::league_remove_friends,
-            commands::league::profile::league_random_champion,
-            commands::league::profile::league_declare_champion,
-            commands::league::skins::league_roll_skin,
-            commands::league::skins::league_roll_ward,
-            commands::league::skins::league_skin_carousel,
-            commands::league::sgp::league_sgp_status,
-            commands::league::sgp::league_sgp_match_history,
-            commands::league::sgp::league_sgp_ranked,
-            commands::league::sgp::league_sgp_summoners,
-            commands::league::sgp::league_sgp_download_replay,
-            commands::league::coach::league_coach_review,
-            commands::league::coach::league_coach_trends,
-            commands::league::coach::league_coach_ask,
-            commands::league::coach::league_coach_ready,
             commands::bilibili_auth::bilibili_qr_generate,
             commands::bilibili_auth::bilibili_qr_poll,
             commands::bilibili_auth::bilibili_captcha_challenge,
@@ -1071,10 +874,6 @@ pub fn run() {
             commands::settings::reset_settings,
             commands::settings::mark_onboarding_complete,
             commands::settings::mark_legal_acknowledged,
-            commands::rpc::rpc_test_connection,
-            commands::rpc::rpc_set_source,
-            commands::rpc::rpc_clear_source,
-            commands::rpc::rpc_set_idle_stats,
             commands::settings::get_bridge_info,
             commands::settings::rotate_bridge_token,
             commands::settings::bridge_open_pairing,
@@ -1347,18 +1146,11 @@ pub fn run() {
             commands::plugins::get_plugin_i18n,
             commands::plugins::check_plugin_updates,
             commands::plugins::update_plugin,
-            commands::p2p::p2p_send_file,
-            commands::p2p::p2p_cancel_send,
-            commands::p2p::p2p_pause_send,
-            commands::p2p::p2p_resume_send,
             commands::app_lifecycle::force_exit_app,
             commands::app_lifecycle::get_debug_info,
             commands::app_lifecycle::get_portable_info,
             commands::tools::twitch::tool_tw_emotes,
             commands::tools::twitch::tool_tw_chat_replay,
-            commands::tools::music::tool_music_playlist,
-            commands::tools::music::tool_lyrics_sync,
-            commands::tools::music::tool_music_history,
             commands::tools::reddit::tool_rd_download,
             commands::tools::reddit::tool_rd_thread,
             commands::tools::reddit::tool_rd_gdpr,

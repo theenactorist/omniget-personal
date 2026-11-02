@@ -143,9 +143,9 @@ test("the firefox manifest keeps the permissions deep search depends on", async 
 test("personal extensions have distinct browser identities and displayed names", async () => {
   const chrome = await readManifest();
   const firefox = JSON.parse(await readFile(new URL("../../firefox/manifest.json", import.meta.url), "utf8"));
-  assert.equal(chrome.name, "OmniGet Personal");
-  assert.equal(chrome.action.default_title, "OmniGet Personal");
+  assert.equal(chrome.name, "Origo Downloads");
+  assert.equal(chrome.action.default_title, "Origo Downloads");
   assert.equal(chrome.key, undefined, "an unpacked personal extension must not inherit the upstream fixed identity");
-  assert.equal(firefox.name, "OmniGet Personal");
+  assert.equal(firefox.name, "Origo Downloads");
   assert.equal(firefox.browser_specific_settings.gecko.id, "omniget-personal@local.invalid");
 });

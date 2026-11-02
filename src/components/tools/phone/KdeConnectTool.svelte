@@ -27,7 +27,7 @@
     catch (e) { showToast("error", errText(e)); } finally { busy = false; }
   }
   async function ping() {
-    try { await invoke("tool_kde_ping", { device, message: "OmniGet" }); showToast("success", "ping"); } catch (e) { showToast("error", errText(e)); }
+    try { await invoke("tool_kde_ping", { device, message: "Origo Downloads" }); showToast("success", "ping"); } catch (e) { showToast("error", errText(e)); }
   }
 </script>
 

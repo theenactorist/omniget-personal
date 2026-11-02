@@ -5,16 +5,9 @@
   import { isMac } from "$lib/platform";
   import { goto } from "$app/navigation";
   import { onMount } from "svelte";
-  import { invoke } from "@tauri-apps/api/core";
   import { listen } from "@tauri-apps/api/event";
   import { initDownloadListener } from "$lib/stores/download-listener";
   import { getCounts } from "$lib/stores/download-store.svelte";
-  import {
-    getUnreadCount as getChatUnreadCount,
-    getMentionTotal as getChatMentionCount,
-    isImmersive,
-    initOmnidisc,
-  } from "$lib/stores/omnidisc-store.svelte";
   import { getSettings, loadSettings } from "$lib/stores/settings-store.svelte";
   import { queueExternalPrefill, type ExternalUrlEvent } from "$lib/stores/external-url-store.svelte";
   import Toast from "$components/toast/Toast.svelte";
@@ -31,33 +24,10 @@
   import { showToast } from "$lib/stores/toast-store.svelte";
   import { t, locale, isRtlLocale } from "$lib/i18n";
   import { get } from "svelte/store";
-  import { CORE_NAV_ITEMS, pluginIconForRoute, type NavItem } from "$lib/nav-config";
+  import { CORE_NAV_ITEMS } from "$lib/nav-config";
   import { TOOLS, toolHref } from "$lib/tools/catalog";
-  import {
-    STUDY_FOCUS_ENABLED,
-    STUDY_PROGRESS_ENABLED,
-    STUDY_ACHIEVEMENTS_ENABLED,
-    STUDY_NOTES_ENABLED,
-  } from "$lib/study-feature-flags";
   import type { Snippet } from "svelte";
-  import type { Component } from "svelte";
-
-  let pluginNavItems = $state<NavItem[]>([]);
-
-  let leagueNavItems = $derived<NavItem[]>(
-    (getSettings()?.league?.enabled ?? true)
-      ? [{ href: "/league", labelKey: "league.nav", icon: "league", group: "app", order: 45 }]
-      : []
-  );
-
-  let coreNavItems = $derived(
-    CORE_NAV_ITEMS.filter((item) => item.href !== "/omnidisc" || (getSettings()?.omnidisc?.enabled ?? true))
-  );
-
-  let allNav = $derived([...coreNavItems, ...leagueNavItems, ...pluginNavItems].sort((a, b) => (a.order ?? 50) - (b.order ?? 50)));
-  let primaryNav = $derived(allNav.filter((item) => item.group === "primary"));
-  let appNav = $derived(allNav.filter((item) => item.group === "app"));
-  let pluginNav = $derived(allNav.filter((item) => item.group === "plugins"));
+  import { isUnavailableRoute } from "$lib/personal-build-policy";
 
   let ytdlpDismissed = $state(false);
   let ytdlpMissing = $derived(isDepsChecked() && !isYtdlpAvailable());
@@ -65,18 +35,12 @@
 
   let counts = $derived(getCounts());
   let badgeLabel = $derived(counts.badge > 99 ? "99+" : String(counts.badge));
-  let chatBadgeCount = $derived(getChatMentionCount() || getChatUnreadCount());
   let settings = $derived(getSettings());
 
-  let isStudyRoute = $derived(page.url.pathname.startsWith("/study"));
-  let isStreamPopout = $derived(page.url.pathname === "/omnidisc/stream");
-  let hideAppSidebar = $derived(page.url.pathname.startsWith("/omnidisc") && isImmersive());
   let isCoreRoute = $derived(
     page.url.pathname === "/" ||
     page.url.pathname.startsWith("/downloads") ||
     page.url.pathname.startsWith("/settings") ||
-    page.url.pathname.startsWith("/marketplace") ||
-    page.url.pathname.startsWith("/league") ||
     page.url.pathname.startsWith("/about"),
   );
 
@@ -109,54 +73,15 @@
     }
   }
 
-  function reloadPluginNav() {
-    invoke<{ id: string; enabled: boolean; nav: { route: string; label: Record<string, string>; icon_svg: string | null; group: string; order: number }[] }[]>("list_plugins")
-      .then((plugins) => {
-        const items: NavItem[] = [];
-        for (const p of plugins) {
-          if (!p.enabled) continue;
-          for (const n of p.nav) {
-            if (n.route === "/study/focus" && !STUDY_FOCUS_ENABLED) continue;
-            if (n.route === "/study/progress" && !STUDY_PROGRESS_ENABLED) continue;
-            if (n.route === "/study/achievements" && !STUDY_ACHIEVEMENTS_ENABLED) continue;
-            if (n.route === "/study/notes" && !STUDY_NOTES_ENABLED) continue;
-            const icon = pluginIconForRoute(n.route);
-            items.push({
-              href: n.route,
-              label: n.label[get(locale)] || n.label["en"] || p.id,
-              icon,
-              iconSvg: icon === "plugin" ? n.icon_svg || undefined : undefined,
-              group: "plugins",
-              pluginId: p.id,
-              order: n.order,
-            });
-          }
-        }
-        pluginNavItems = items;
-        buildCommandPaletteItems();
-      })
-      .catch(() => {});
-  }
-
-  let omnidiscStarted = false;
-  $effect(() => {
-    if (omnidiscStarted || !(getSettings()?.omnidisc?.enabled ?? true)) return;
-    omnidiscStarted = true;
-    void initOmnidisc();
-  });
-
   onMount(() => {
     initDownloadListener();
-    // If `get_settings` failed while the shell was booting, the sidebar has no
-    // League entry and Settings spins forever. Retry a few times instead of
-    // leaving the app half-configured until the next restart.
+    // Retry settings if the initial shell request failed.
     if (!getSettings()) {
       let attempts = 0;
       const retry = () => {
         if (getSettings() || attempts >= 5) return;
         attempts += 1;
         loadSettings()
-          .then(() => reloadPluginNav())
           .catch(() => setTimeout(retry, 1000 * attempts));
       };
       setTimeout(retry, 500);
@@ -190,10 +115,8 @@
     refreshYtdlpStatus();
     refreshUpdateInfo();
     initChangelog();
-    reloadPluginNav();
 
     let unlistenExternalUrl: (() => void) | null = null;
-    let unlistenPlugins: (() => void) | null = null;
 
     listen<Omit<ExternalUrlEvent, "id">>("external-url-event", (event) => {
       handleExternalUrlEvent(event.payload);
@@ -201,15 +124,8 @@
       unlistenExternalUrl = un;
     });
 
-    listen("plugins-changed", () => {
-      reloadPluginNav();
-    }).then((un) => {
-      unlistenPlugins = un;
-    });
-
     return () => {
       if (unlistenExternalUrl) unlistenExternalUrl();
-      if (unlistenPlugins) unlistenPlugins();
     };
   });
 
@@ -252,13 +168,6 @@
         keywords: [...tool.keywords, get(t)(`tools.categories.${tool.category}.name`)].join(" "),
         action: () => goto(toolHref(tool)),
       })),
-      {
-        id: "nav-marketplace",
-        label: get(t)("nav.marketplace"),
-        group: get(t)("command_palette.group_nav"),
-        keywords: "plugins extensions store",
-        action: () => goto("/marketplace"),
-      },
       {
         id: "nav-about",
         label: get(t)("nav.about"),
@@ -323,35 +232,10 @@
 
   let { children }: { children: Snippet } = $props();
 
-  const VACUUM_LAST_RUN_KEY = "study.library.auto_vacuum.last_run";
-
-  async function checkAutoVacuum() {
-    try {
-      const now = Date.now();
-      const lastRunStr = localStorage.getItem(VACUUM_LAST_RUN_KEY);
-      const lastRun = lastRunStr ? parseInt(lastRunStr, 10) : 0;
-
-      if (now - lastRun > 7 * 24 * 60 * 60 * 1000) {
-        await invoke("db_vacuum");
-        localStorage.setItem(VACUUM_LAST_RUN_KEY, String(now));
-      }
-    } catch {}
-  }
-
-  onMount(() => {
-    void checkAutoVacuum();
-  });
 </script>
 
-{#if isStreamPopout}
-  <div class="stream-popout">
-    {@render children()}
-  </div>
-{:else}
 <div class="shell" data-reduce-motion={settings?.accessibility?.reduce_motion} data-reduce-transparency={settings?.accessibility?.reduce_transparency}>
-  {#if !hideAppSidebar}
-    <AppSidebar {primaryNav} {appNav} {pluginNav} {badgeLabel} {chatBadgeCount} />
-  {/if}
+  <AppSidebar primaryNav={CORE_NAV_ITEMS.filter((item) => item.group === "primary")} appNav={CORE_NAV_ITEMS.filter((item) => item.group === "app")} {badgeLabel} badgeCount={counts.badge} />
 
   <div class="shell-body">
     <AppToolbar />
@@ -379,10 +263,8 @@
 
     <main id="main-content" class="content">
       <div class="mac-pane" class:mac-pane--flush={isFlushRoute}>
-        {#if isStudyRoute}
-          <div class="study-shell">
-            {@render children()}
-          </div>
+        {#if isUnavailableRoute(page.url.pathname)}
+          <!-- The load redirect handles navigation; never mount removed pages. -->
         {:else if isCoreRoute}
           <div class="core-shell" class:core-shell--flush={isFlushRoute}>
             {@render children()}
@@ -396,7 +278,6 @@
     </main>
   </div>
 </div>
-{/if}
 
 <Toast />
 <CommandPalette />
@@ -468,21 +349,6 @@
   .core-shell--flush {
     padding: 0;
     overflow: hidden;
-  }
-
-  .study-shell {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-    overflow: hidden;
-  }
-
-  .stream-popout {
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-    background: var(--bg);
   }
 
   .ytdlp-banner {

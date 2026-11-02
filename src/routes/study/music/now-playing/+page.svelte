@@ -121,7 +121,7 @@
 </script>
 
 <svelte:head>
-  <title>{track?.title ?? $t("study.music.now_playing_title")} · omniget</title>
+  <title>{track?.title ?? $t("study.music.now_playing_title")} · Origo Downloads</title>
 </svelte:head>
 
 {#if track}

@@ -14,16 +14,24 @@ impl PlatformRegistry {
     }
 
     pub fn register(&mut self, platform: Arc<dyn PlatformDownloader>) {
-        self.platforms.push(platform);
+        if super::personal_policy::platform_enabled(platform.name()) {
+            self.platforms.push(platform);
+        }
     }
 
     pub fn find_platform(&self, url: &str) -> Option<Arc<dyn PlatformDownloader>> {
+        if !super::personal_policy::url_enabled(url) {
+            return None;
+        }
         self.platforms.iter().find(|p| p.can_handle(url)).cloned()
     }
 
     /// Downloader pelo nome (`"direct_file"`, `"generic"`…), para quando a
     /// escolha vem de uma sondagem e não de `can_handle`.
     pub fn find_by_name(&self, name: &str) -> Option<Arc<dyn PlatformDownloader>> {
+        if !super::personal_policy::platform_enabled(name) {
+            return None;
+        }
         self.platforms.iter().find(|p| p.name() == name).cloned()
     }
 }

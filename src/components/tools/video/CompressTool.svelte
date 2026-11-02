@@ -21,6 +21,7 @@
   type Result = { items: Item[] };
 
   let files = $state<string[]>([]);
+  let sharingPreset = $state<"custom" | "whatsapp">("custom");
   let targetMb = $state(10);
   let codec = $state("h264");
   let audioKbps = $state(0);
@@ -54,14 +55,22 @@
       result = await invoke<Result>("tool_video_compress", {
         opts: {
           inputs: files,
-          target_mb: targetMb,
-          codec,
-          audio_kbps: audioKbps,
-          max_height: maxHeight,
-          fps,
-          preset,
           output_dir: outDir,
-          suffix: "",
+          ...(sharingPreset === "whatsapp"
+            ? {
+                sharing_preset: "whatsapp",
+                // Required by the command schema; the backend owns the preset's size budget.
+                target_mb: 15_000_000 / (1024 * 1024),
+              }
+            : {
+                target_mb: targetMb,
+                codec,
+                audio_kbps: audioKbps,
+                max_height: maxHeight,
+                fps,
+                preset,
+                suffix: "",
+              }),
         },
       });
       const failed = result.items.filter((i) => !i.ok).length;
@@ -74,42 +83,56 @@
   }
 </script>
 
-<div class="tool">
+<div class="tool" aria-busy={busy}>
   <section>
     <div class="group">
       <div class="group-row">
         <div class="group-row-content"><div class="group-row-title">{files.length} {$t("tools.common.files")}</div><div class="group-row-sub mono">{files.map(baseName).slice(0, 5).join(", ")}{files.length > 5 ? "…" : ""}</div></div>
-        <div class="group-row-trailing btn-row">{#if files.length}<button class="btn btn-ghost btn-sm" type="button" onclick={() => (files = [])}>×</button>{/if}<button class="btn btn-secondary btn-sm" type="button" onclick={async () => { files = [...files, ...(await pickFiles(FILTERS.video))]; }}>{$t("tools.common.add")}</button></div>
+        <div class="group-row-trailing btn-row">{#if files.length}<button class="btn btn-ghost btn-sm" type="button" aria-label={$t("tools.common.remove")} disabled={busy} onclick={() => (files = [])}>×</button>{/if}<button class="btn btn-secondary btn-sm" type="button" disabled={busy} onclick={async () => { files = [...files, ...(await pickFiles(FILTERS.video))]; }}>{$t("tools.common.add")}</button></div>
       </div>
       <div class="group-row">
-        <div class="group-row-content"><div class="group-row-title">{$t("tools.vcompress.target")}</div><div class="group-row-sub">{$t("tools.vcompress.target_hint")}</div></div>
-        <div class="group-row-trailing btn-row">
-          <input class="input" type="number" min="0.5" step="0.5" bind:value={targetMb} style:width="6em" />
-          <span class="dim">MB</span>
-          <select class="input" bind:value={codec}><option value="h264">H.264</option><option value="h265">H.265</option><option value="vp9">VP9</option></select>
+        <div class="group-row-content">
+          <label class="group-row-title" for="compress-sharing-preset">{$t("tools.vcompress.sharing_preset")}</label>
+          {#if sharingPreset === "whatsapp"}<div class="group-row-sub" id="compress-whatsapp-hint">{$t("tools.vcompress.whatsapp_hint")}</div>{/if}
+        </div>
+        <div class="group-row-trailing">
+          <select class="input" id="compress-sharing-preset" bind:value={sharingPreset} disabled={busy} aria-describedby={sharingPreset === "whatsapp" ? "compress-whatsapp-hint" : undefined}>
+            <option value="custom">{$t("tools.vcompress.sharing_custom")}</option>
+            <option value="whatsapp">{$t("tools.vcompress.sharing_whatsapp")}</option>
+          </select>
         </div>
       </div>
-      <div class="group-row">
-        <div class="group-row-content"><div class="group-row-title">{$t("tools.vcompress.height")} <span class="dim">· {$t("tools.vcompress.audio")}</span></div></div>
-        <div class="group-row-trailing btn-row">
-          <select class="input" bind:value={maxHeight}><option value={0}>{$t("tools.vcompress.keep")}</option><option value={1080}>1080p</option><option value={720}>720p</option><option value={480}>480p</option><option value={360}>360p</option></select>
-          <select class="input" bind:value={audioKbps}><option value={0}>{$t("tools.vcompress.audio_auto")}</option><option value={128}>128k</option><option value={96}>96k</option><option value={64}>64k</option></select>
+      {#if sharingPreset === "custom"}
+        <div class="group-row">
+          <div class="group-row-content"><label class="group-row-title" for="compress-target">{$t("tools.vcompress.target")}</label><div class="group-row-sub" id="compress-target-hint">{$t("tools.vcompress.target_hint")}</div></div>
+          <div class="group-row-trailing btn-row">
+            <input class="input" id="compress-target" type="number" min="0.5" step="0.5" bind:value={targetMb} disabled={busy} aria-describedby="compress-target-hint compress-target-unit" style:width="6em" />
+            <span class="dim" id="compress-target-unit">MB</span>
+            <select class="input" bind:value={codec} disabled={busy} aria-label={$t("tools.vcompress.codec")}><option value="h264">H.264</option><option value="h265">H.265</option><option value="vp9">VP9</option></select>
+          </div>
         </div>
-      </div>
-      <div class="group-row">
-        <div class="group-row-content"><div class="group-row-title">{$t("tools.vcompress.preset")} <span class="dim">· {$t("tools.vcompress.fps")}</span></div><div class="group-row-sub">{$t("tools.vcompress.two_pass")}</div></div>
-        <div class="group-row-trailing btn-row">
-          <select class="input" bind:value={preset} disabled={codec === "vp9"}><option value="veryfast">{$t("tools.vcompress.preset_fast")}</option><option value="medium">{$t("tools.vcompress.preset_medium")}</option><option value="slow">{$t("tools.vcompress.preset_slow")}</option></select>
-          <select class="input" bind:value={fps}><option value={0}>{$t("tools.vcompress.keep")}</option><option value={60}>60</option><option value={30}>30</option><option value={24}>24</option></select>
+        <div class="group-row">
+          <div class="group-row-content"><div class="group-row-title">{$t("tools.vcompress.height")} <span class="dim">· {$t("tools.vcompress.audio")}</span></div></div>
+          <div class="group-row-trailing btn-row">
+            <select class="input" bind:value={maxHeight} disabled={busy} aria-label={$t("tools.vcompress.height")}><option value={0}>{$t("tools.vcompress.keep")}</option><option value={1080}>1080p</option><option value={720}>720p</option><option value={480}>480p</option><option value={360}>360p</option></select>
+            <select class="input" bind:value={audioKbps} disabled={busy} aria-label={$t("tools.vcompress.audio")}><option value={0}>{$t("tools.vcompress.audio_auto")}</option><option value={128}>128k</option><option value={96}>96k</option><option value={64}>64k</option></select>
+          </div>
         </div>
-      </div>
+        <div class="group-row">
+          <div class="group-row-content"><div class="group-row-title">{$t("tools.vcompress.preset")} <span class="dim">· {$t("tools.vcompress.fps")}</span></div><div class="group-row-sub">{$t("tools.vcompress.two_pass")}</div></div>
+          <div class="group-row-trailing btn-row">
+            <select class="input" bind:value={preset} disabled={busy || codec === "vp9"} aria-label={$t("tools.vcompress.preset")}><option value="veryfast">{$t("tools.vcompress.preset_fast")}</option><option value="medium">{$t("tools.vcompress.preset_medium")}</option><option value="slow">{$t("tools.vcompress.preset_slow")}</option></select>
+            <select class="input" bind:value={fps} disabled={busy} aria-label={$t("tools.vcompress.fps")}><option value={0}>{$t("tools.vcompress.keep")}</option><option value={60}>60</option><option value={30}>30</option><option value={24}>24</option></select>
+          </div>
+        </div>
+      {/if}
       <div class="group-row">
         <div class="group-row-content"><div class="group-row-title">{$t("tools.common.output_folder")}</div><div class="group-row-sub mono">{outDir || $t("tools.common.same_folder")}</div></div>
-        <div class="group-row-trailing"><button class="btn btn-secondary btn-sm" type="button" onclick={async () => { const d = await pickDir(); if (d) outDir = d; }}>{$t("tools.common.choose")}</button></div>
+        <div class="group-row-trailing"><button class="btn btn-secondary btn-sm" type="button" disabled={busy} onclick={async () => { const d = await pickDir(); if (d) outDir = d; }}>{$t("tools.common.choose")}</button></div>
       </div>
       <div class="group-row">
         <div class="group-row-content">{#if busy}<div class="group-row-sub mono">{progress?.message ? baseName(progress.message) : "…"}</div><div class="progress"><div class="progress-fill" style:width="{pct(progress) ?? 0}%"></div></div>{/if}</div>
-        <div class="group-row-trailing"><button class="btn btn-primary" type="button" disabled={busy || !files.length} onclick={run}>{busy ? $t("tools.common.working") : $t("tools.vcompress.run")}</button></div>
+        <div class="group-row-trailing"><button class="btn btn-primary" type="button" disabled={busy || !files.length} onclick={run}>{busy ? $t("tools.common.working") : sharingPreset === "whatsapp" ? $t("tools.vcompress.run_whatsapp") : $t("tools.vcompress.run")}</button></div>
       </div>
     </div>
   </section>
@@ -124,7 +147,7 @@
               <div class="group-row-sub">
                 {fmtBytes(item.bytes_before)} → <strong>{fmtBytes(item.bytes_after)}</strong>
                 {#if saved(item) > 0}<span class="dim"> · {saved(item)}% {$t("tools.vcompress.saved")}</span>{/if}
-                <span class="dim"> · {$t("tools.vcompress.bitrate", { kbps: item.video_kbps })}</span>
+                <span class="dim"> · {$t("tools.vcompress.bitrate").replace("{kbps}", String(item.video_kbps))}</span>
                 {#if item.bytes_after > item.target_bytes}<span class="tag tag-danger">{$t("tools.vcompress.over")}</span>{/if}
               </div>
             {:else}

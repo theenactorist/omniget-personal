@@ -1,51 +1,51 @@
 {
   "action_title_supported": {
-    "message": "将此媒体页面发送到 OmniGet Personal"
+    "message": "将此媒体页面发送到 Origo Downloads"
   },
   "action_title_unsupported": {
     "message": "此页面未检测到受支持的媒体"
   },
   "error_page_document_title": {
-    "message": "OmniGet Personal 扩展程序"
+    "message": "Origo Downloads 扩展程序"
   },
   "error_page_eyebrow": {
-    "message": "OmniGet Personal 扩展程序"
+    "message": "Origo Downloads 扩展程序"
   },
   "error_page_install_cta": {
-    "message": "安装 OmniGet Personal"
+    "message": "安装 Origo Downloads"
   },
   "error_page_open_extensions": {
     "message": "打开扩展设置"
   },
   "error_host_missing_title": {
-    "message": "先打开一次 OmniGet Personal 以完成设置"
+    "message": "先打开一次 Origo Downloads 以完成设置"
   },
   "error_host_missing_body": {
-    "message": "浏览器目前还找不到这台电脑上的 OmniGet Personal 桥接程序。"
+    "message": "浏览器目前还找不到这台电脑上的 Origo Downloads 桥接程序。"
   },
   "error_host_missing_detail": {
-    "message": "如有需要请安装 OmniGet Personal，然后先启动一次桌面应用，再次点击扩展程序。"
+    "message": "如有需要请安装 Origo Downloads，然后先启动一次桌面应用，再次点击扩展程序。"
   },
   "error_invalid_url_title": {
-    "message": "此页面 URL 无法发送到 OmniGet Personal"
+    "message": "此页面 URL 无法发送到 Origo Downloads"
   },
   "error_invalid_url_body": {
-    "message": "当前页面不是 OmniGet Personal 扩展程序支持的媒体页面。"
+    "message": "当前页面不是 Origo Downloads 扩展程序支持的媒体页面。"
   },
   "error_invalid_url_detail": {
     "message": "请从视频、Reel、帖子、播放列表或课程的直接页面重试。"
   },
   "error_launch_failed_title": {
-    "message": "浏览器无法启动 OmniGet Personal"
+    "message": "浏览器无法启动 Origo Downloads"
   },
   "error_launch_failed_body": {
     "message": "扩展程序已与原生主机通信，但桌面应用未能正确启动。"
   },
   "error_launch_failed_detail": {
-    "message": "请确认 OmniGet Personal 已安装且未被系统阻止，然后重试。"
+    "message": "请确认 Origo Downloads 已安装且未被系统阻止，然后重试。"
   },
   "popup_send_default": {
-    "message": "发送到 OmniGet Personal"
+    "message": "发送到 Origo Downloads"
   },
   "popup_send_audio": {
     "message": "发送音频"
@@ -148,46 +148,46 @@
     }
   },
   "popup_not_running": {
-    "message": "OmniGet Personal 未运行"
+    "message": "Origo Downloads 未运行"
   },
   "popup_try_again": {
     "message": "重试"
   },
   "popup_get_app": {
-    "message": "获取 OmniGet Personal"
+    "message": "获取 Origo Downloads"
   },
   "popup_lbl_course": {
-    "message": "发送课程到 OmniGet Personal"
+    "message": "发送课程到 Origo Downloads"
   },
   "popup_lbl_playlist": {
-    "message": "发送播放列表到 OmniGet Personal"
+    "message": "发送播放列表到 Origo Downloads"
   },
   "popup_lbl_video": {
-    "message": "发送视频到 OmniGet Personal"
+    "message": "发送视频到 Origo Downloads"
   },
   "popup_lbl_reel": {
-    "message": "发送 Reel 到 OmniGet Personal"
+    "message": "发送 Reel 到 Origo Downloads"
   },
   "popup_lbl_post": {
-    "message": "发送帖子到 OmniGet Personal"
+    "message": "发送帖子到 Origo Downloads"
   },
   "popup_lbl_short": {
-    "message": "发送 Shorts 到 OmniGet Personal"
+    "message": "发送 Shorts 到 Origo Downloads"
   },
   "popup_lbl_clip": {
-    "message": "发送片段到 OmniGet Personal"
+    "message": "发送片段到 Origo Downloads"
   },
   "popup_lbl_image": {
-    "message": "发送图片到 OmniGet Personal"
+    "message": "发送图片到 Origo Downloads"
   },
   "popup_lbl_audio": {
-    "message": "发送音频到 OmniGet Personal"
+    "message": "发送音频到 Origo Downloads"
   },
   "popup_lbl_profile": {
-    "message": "发送主页到 OmniGet Personal"
+    "message": "发送主页到 Origo Downloads"
   },
   "popup_lbl_page": {
-    "message": "发送页面到 OmniGet Personal"
+    "message": "发送页面到 Origo Downloads"
   },
   "popup_ck_saving": {
     "message": "正在保存 Cookie…"
@@ -215,7 +215,7 @@
     }
   },
   "popup_ck_hint": {
-    "message": "将此站点的 Cookie 发送到 OmniGet Personal 的 Cookie 管理器。"
+    "message": "将此站点的 Cookie 发送到 Origo Downloads 的 Cookie 管理器。"
   },
   "popup_ckerr_no_url": {
     "message": "没有活动标签页"
@@ -233,13 +233,13 @@
     "message": "该站点没有 Cookie"
   },
   "popup_ckerr_missing_token": {
-    "message": "请先配对 OmniGet Personal"
+    "message": "请先配对 Origo Downloads"
   },
   "popup_ckerr_missing_endpoint": {
-    "message": "未检测到 OmniGet Personal"
+    "message": "未检测到 Origo Downloads"
   },
   "popup_ckerr_fetch_failed": {
-    "message": "OmniGet Personal 未运行"
+    "message": "Origo Downloads 未运行"
   },
   "popup_ckerr_unauthorized": {
     "message": "配对令牌无效"

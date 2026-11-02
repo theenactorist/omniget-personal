@@ -728,7 +728,7 @@
 </script>
 
 <svelte:head>
-  <title>{$t("study.focus.title")} | OmniGet</title>
+  <title>{$t("study.focus.title")} | Origo Downloads</title>
 </svelte:head>
 
 <div

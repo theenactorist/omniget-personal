@@ -45,7 +45,11 @@ pub struct PluginManager {
 
 impl PluginManager {
     pub fn new(plugins_dir: PathBuf) -> Self {
-        let installed = load_installed_list(&plugins_dir);
+        let mut installed = load_installed_list(&plugins_dir);
+        // Preserve installed.json while overriding every saved enable flag in memory.
+        for entry in &mut installed {
+            entry.enabled = false;
+        }
         let user_removed = load_removed_list(&plugins_dir);
         Self {
             plugins_dir,
@@ -57,6 +61,10 @@ impl PluginManager {
     }
 
     pub fn load_all(&mut self, host: Arc<dyn PluginHost>) {
+        if omniget_core::core::personal_policy::require_native_plugins().is_err() {
+            return;
+        }
+
         tracing::info!(
             "[plugins] load_all: {} installed, {} enabled",
             self.installed.len(),
@@ -94,6 +102,9 @@ impl PluginManager {
     }
 
     pub fn load_one(&mut self, id: &str, host: Arc<dyn PluginHost>) -> Result<(), PluginLoadError> {
+        omniget_core::core::personal_policy::require_native_plugins()
+            .map_err(|reason| PluginLoadError::simple("disabled_personal_build", reason))?;
+
         let plugin_dir = self.plugin_dir(id).map_err(|e| PluginLoadError {
             message: e.to_string(),
             kind: "invalid_id".to_string(),
@@ -150,6 +161,8 @@ impl PluginManager {
         command: &str,
         args: serde_json::Value,
     ) -> Result<serde_json::Value, String> {
+        omniget_core::core::personal_policy::require_native_plugins()?;
+
         let loaded = self
             .loaded
             .get(plugin_id)
@@ -162,10 +175,16 @@ impl PluginManager {
     }
 
     pub fn save_installed(&self) -> anyhow::Result<()> {
+        omniget_core::core::personal_policy::require_native_plugins()
+            .map_err(anyhow::Error::msg)?;
+
         save_installed_list(&self.plugins_dir, &self.installed)
     }
 
     pub fn register_installed(&mut self, entry: InstalledPlugin) -> anyhow::Result<()> {
+        omniget_core::core::personal_policy::require_native_plugins()
+            .map_err(anyhow::Error::msg)?;
+
         if self.user_removed.remove(&entry.id) {
             let _ = save_removed_list(&self.plugins_dir, &self.user_removed);
         }
@@ -179,6 +198,9 @@ impl PluginManager {
     }
 
     pub fn unregister(&mut self, plugin_id: &str) -> anyhow::Result<()> {
+        omniget_core::core::personal_policy::require_native_plugins()
+            .map_err(anyhow::Error::msg)?;
+
         if let Some(mut loaded) = self.loaded.remove(plugin_id) {
             loaded.plugin.shutdown();
             let _leaked_lib = loaded._lib.take();
@@ -199,6 +221,9 @@ impl PluginManager {
     }
 
     pub fn set_enabled(&mut self, plugin_id: &str, enabled: bool) -> anyhow::Result<()> {
+        omniget_core::core::personal_policy::require_native_plugins()
+            .map_err(anyhow::Error::msg)?;
+
         if let Some(entry) = self.installed.iter_mut().find(|p| p.id == plugin_id) {
             entry.enabled = enabled;
         }
@@ -251,6 +276,9 @@ fn load_single_plugin(
     plugin_dir: &Path,
     host: Arc<dyn PluginHost>,
 ) -> Result<LoadedPlugin, PluginLoadError> {
+    omniget_core::core::personal_policy::require_native_plugins()
+        .map_err(|reason| PluginLoadError::simple("disabled_personal_build", reason))?;
+
     let manifest_path = plugin_dir.join("plugin.json");
     let manifest_str = fs::read_to_string(&manifest_path).map_err(|e| {
         PluginLoadError::simple("manifest_read", format!("Cannot read plugin.json: {e}"))
@@ -579,6 +607,89 @@ fn save_removed_list(plugins_dir: &Path, removed: &HashSet<String>) -> anyhow::R
 #[cfg(test)]
 mod plugin_id_tests {
     use super::*;
+
+    struct UnusedHost;
+    impl PluginHost for UnusedHost {
+        fn emit_event(&self, _: &str, _: serde_json::Value) -> anyhow::Result<()> {
+            panic!("plugin host executed")
+        }
+        fn show_toast(&self, _: &str, _: &str) -> anyhow::Result<()> {
+            panic!("plugin host executed")
+        }
+        fn plugin_data_dir(&self, _: &str) -> PathBuf {
+            panic!("plugin host executed")
+        }
+        fn plugin_frontend_dir(&self, _: &str) -> PathBuf {
+            panic!("plugin host executed")
+        }
+        fn get_settings(&self, _: &str) -> serde_json::Value {
+            panic!("plugin host executed")
+        }
+        fn save_settings(&self, _: &str, _: serde_json::Value) -> anyhow::Result<()> {
+            panic!("plugin host executed")
+        }
+        fn proxy_config(&self) -> Option<omniget_plugin_sdk::ProxyConfig> {
+            panic!("plugin host executed")
+        }
+        fn tool_path(&self, _: &str) -> Option<PathBuf> {
+            panic!("plugin host executed")
+        }
+        fn default_output_dir(&self) -> PathBuf {
+            panic!("plugin host executed")
+        }
+        fn external_data_cache(&self, _: &str, _: &str) -> anyhow::Result<PathBuf> {
+            panic!("plugin host executed")
+        }
+    }
+
+    #[tokio::test]
+    async fn personal_build_never_loads_saved_enabled_plugins_or_mutates_their_data() {
+        let dir =
+            std::env::temp_dir().join(format!("omniget-disabled-plugins-{}", uuid::Uuid::new_v4()));
+        fs::create_dir_all(&dir).unwrap();
+        let installed: Vec<_> = ["courses", "telegram", "convert", "study"]
+            .into_iter()
+            .map(|id| InstalledPlugin {
+                id: id.into(),
+                version: "1.0.0".into(),
+                installed_at: "keep-date".into(),
+                updated_at: "keep-date".into(),
+                enabled: true,
+                repo: None,
+                source_release: None,
+            })
+            .collect();
+        let original = serde_json::to_string(&serde_json::json!({"plugins": installed})).unwrap();
+        fs::write(dir.join("installed.json"), &original).unwrap();
+        let mut manager = PluginManager::new(dir.clone());
+        let host: Arc<dyn PluginHost> = Arc::new(UnusedHost);
+        manager.load_all(host.clone());
+        assert!(manager.loaded_plugins().is_empty());
+        assert!(manager.installed_plugins().iter().all(|p| !p.enabled));
+        for id in ["courses", "telegram", "convert", "study"] {
+            let error = manager.load_one(id, host.clone()).unwrap_err();
+            assert_eq!(error.kind, "disabled_personal_build");
+            assert!(manager.set_enabled(id, true).is_err());
+            assert!(manager.unregister(id).is_err());
+            assert_eq!(
+                manager
+                    .handle_command(id, "run", serde_json::json!({}))
+                    .await
+                    .unwrap_err(),
+                omniget_core::core::personal_policy::DISABLED_PLUGIN_REASON
+            );
+        }
+        let error = load_single_plugin(&dir.join("courses"), host)
+            .err()
+            .unwrap();
+        assert_eq!(error.kind, "disabled_personal_build");
+        assert_eq!(
+            fs::read_to_string(dir.join("installed.json")).unwrap(),
+            original
+        );
+        assert_eq!(fs::read_dir(&dir).unwrap().count(), 1);
+        fs::remove_dir_all(dir).unwrap();
+    }
 
     #[test]
     fn aceita_os_ids_reais() {

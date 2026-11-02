@@ -5,9 +5,9 @@ import { resolveErrorPageContent } from "../pages/error-content.js";
 
 test("uses localized page strings when locale messages are available", () => {
   const localized = {
-    error_page_document_title: "Extension OmniGet Personal",
-    error_page_eyebrow: "Extension OmniGet Personal",
-    error_page_install_cta: "Installer OmniGet Personal",
+    error_page_document_title: "Extension Origo Downloads",
+    error_page_eyebrow: "Extension Origo Downloads",
+    error_page_install_cta: "Installer Origo Downloads",
     error_page_open_extensions: "Ouvrir les extensions Chrome",
     error_host_missing_title: "Titre localise",
     error_host_missing_body: "Corps localise",
@@ -19,9 +19,9 @@ test("uses localized page strings when locale messages are available", () => {
     getMessage: (name) => localized[name] ?? "",
   });
 
-  assert.equal(content.documentTitle, "Extension OmniGet Personal");
-  assert.equal(content.eyebrow, "Extension OmniGet Personal");
-  assert.equal(content.installLabel, "Installer OmniGet Personal");
+  assert.equal(content.documentTitle, "Extension Origo Downloads");
+  assert.equal(content.eyebrow, "Extension Origo Downloads");
+  assert.equal(content.installLabel, "Installer Origo Downloads");
   assert.equal(content.openExtensionsLabel, "Ouvrir les extensions Chrome");
   assert.equal(content.title, "Titre localise");
   assert.equal(content.body, "Corps localise");
@@ -34,8 +34,8 @@ test("falls back to English when locale messages are missing", () => {
     getMessage: () => "",
   });
 
-  assert.equal(content.documentTitle, "OmniGet Personal Extension");
-  assert.equal(content.title, "This page URL cannot be sent to OmniGet Personal");
+  assert.equal(content.documentTitle, "Origo Downloads Extension");
+  assert.equal(content.title, "This page URL cannot be sent to Origo Downloads");
   assert.equal(
     content.detail,
     "Try again from a direct video, reel, post, playlist, or course page."
@@ -59,5 +59,5 @@ test("falls back to LAUNCH_FAILED content for unknown error codes", () => {
   });
 
   assert.equal(content.code, "LAUNCH_FAILED");
-  assert.equal(content.title, "OmniGet Personal could not be launched from your browser");
+  assert.equal(content.title, "Origo Downloads could not be launched from your browser");
 });

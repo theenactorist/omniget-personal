@@ -283,7 +283,7 @@ async fn pair() -> Response {
     error_response(
         StatusCode::FORBIDDEN,
         "MANUAL_PAIRING_REQUIRED",
-        "Copy the endpoint and token from OmniGet settings into the extension.".to_string(),
+        "Copy the endpoint and token from Origo Downloads settings into the extension.".to_string(),
     )
 }
 
@@ -330,7 +330,7 @@ async fn enqueue(
                 StatusCode::BAD_REQUEST,
                 "UNSUPPORTED_PROTOCOL",
                 format!(
-                    "Extension protocol v{client_version} is newer than host v{HOST_MAX_PROTOCOL_VERSION}. Please update OmniGet."
+                    "Extension protocol v{client_version} is newer than host v{HOST_MAX_PROTOCOL_VERSION}. Please update Origo Downloads."
                 ),
             );
         }
@@ -440,7 +440,7 @@ async fn cookies_export(
                 StatusCode::BAD_REQUEST,
                 "UNSUPPORTED_PROTOCOL",
                 format!(
-                    "Extension protocol v{client_version} is newer than host v{HOST_MAX_PROTOCOL_VERSION}. Please update OmniGet."
+                    "Extension protocol v{client_version} is newer than host v{HOST_MAX_PROTOCOL_VERSION}. Please update Origo Downloads."
                 ),
             );
         }
@@ -515,7 +515,7 @@ async fn mcp_post(
         return unauthorized();
     }
     if !crate::mcp::enabled() {
-        return (StatusCode::FORBIDDEN, Json(serde_json::json!({ "error": "MCP server is disabled in OmniGet → Tools → MCP server" }))).into_response();
+        return (StatusCode::FORBIDDEN, Json(serde_json::json!({ "error": "MCP server is disabled in Origo Downloads → Tools → MCP server" }))).into_response();
     }
     let msg: serde_json::Value = match serde_json::from_slice(&body) {
         Ok(v) => v,

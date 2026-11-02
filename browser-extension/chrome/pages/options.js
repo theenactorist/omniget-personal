@@ -263,7 +263,7 @@ if (typeof document !== "undefined") {
     setDiscovery("found", token
       ? "Saved connection. Use Test connection to check that the desktop app is running."
       : "Copy the endpoint and token from the desktop app, then select Save.");
-    endpointHint.textContent = "Use the exact endpoint shown in OmniGet Personal's browser extension settings.";
+    endpointHint.textContent = "Use the exact endpoint shown in Origo Downloads's browser extension settings.";
   }
 
   revealBtn.addEventListener("click", () => {
@@ -307,12 +307,12 @@ if (typeof document !== "undefined") {
     const result = await checkBridgeConnection(endpoint, tokenInput.value);
     if (result.ok) {
       const versionSuffix = result.version ? ` (v${result.version})` : "";
-      setStatus(`Connected to OmniGet Personal${versionSuffix} at ${endpoint}.`, "ok");
+      setStatus(`Connected to Origo Downloads${versionSuffix} at ${endpoint}.`, "ok");
     } else {
       setStatus(
         result.reason === "unauthorized"
           ? "The token was rejected. Copy the current token from the desktop app and try again."
-          : `Could not verify OmniGet Personal at ${endpoint}. Check the endpoint, token and that the app is running.`,
+          : `Could not verify Origo Downloads at ${endpoint}. Check the endpoint, token and that the app is running.`,
         "error"
       );
     }

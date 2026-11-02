@@ -12,23 +12,14 @@
     if (path === "/") return "";
     if (path.startsWith("/downloads")) return $t("nav.downloads");
     if (path.startsWith("/tools")) return $t("tools.hub.title");
-    if (path.startsWith("/marketplace")) return $t("nav.marketplace");
     if (path.startsWith("/settings")) return $t("nav.settings");
     if (path.startsWith("/about")) return $t("nav.about");
-    if (path.startsWith("/omnidisc")) return $t("nav.omnidisc");
-    if (path.startsWith("/league")) return $t("league.nav");
-    if (path.startsWith("/courses")) return $t("courses.title");
-    if (path.startsWith("/convert")) return $t("convert.title");
-    if (path.startsWith("/telegram")) return $t("telegram.title");
-    if (path.startsWith("/study/music")) return $t("study.hub.music");
-    if (path.startsWith("/study")) return $t("study.hub.title");
     if (path.startsWith("/misc/file-clip")) return $t("tools.catalog.video-clip.name");
-    if (path.includes("/library")) return $t("study.hub.library");
     return "";
   });
 </script>
 
-<header class="mac-titlebar" data-tauri-drag-region aria-label={pageTitle || "OmniGet"}>
+<header class="mac-titlebar" data-tauri-drag-region aria-label={pageTitle || "Origo Downloads"}>
   <div class="mac-titlebar-leading" data-tauri-drag-region>
     {#if pageTitle}
       <h1 class="mac-titlebar-title" data-tauri-drag-region>{pageTitle}</h1>

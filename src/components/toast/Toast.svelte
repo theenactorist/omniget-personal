@@ -21,6 +21,7 @@
     {#each toasts as toast (toast.id)}
       <div
         class="toast"
+        class:has-detail={!!toast.detail || !!toast.action}
         data-type={toast.type}
         class:closing={toast.closing}
         role={toast.type === "error" ? "alert" : "status"}
@@ -31,7 +32,17 @@
             <path d={iconPath(toast.type)} />
           </svg>
         </span>
-        <span class="toast-message">{toast.message}</span>
+        <div class="toast-content">
+          <span class="toast-message">{toast.message}</span>
+          {#if toast.detail}
+            <span class="toast-detail" dir="auto">{toast.detail}</span>
+          {/if}
+          {#if toast.action}
+            <button class="btn btn-secondary toast-action" type="button" disabled={toast.closing} onclick={() => toast.action?.onClick()}>
+              {toast.action.label}
+            </button>
+          {/if}
+        </div>
         <button class="toast-close" onclick={() => dismissToast(toast.id)} aria-label={$t("common.close") as string}>
           <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M18 6L6 18M6 6l12 12" />
@@ -43,7 +54,7 @@
 {/if}
 
 <style>
-  /* macOS notifications: top-trailing, glass, one line of text, symbol tile. */
+  /* macOS notifications: top-trailing, glass, symbol tile. */
   .toast-container {
     position: fixed;
     top: calc(var(--titlebar-height, 44px) + var(--space-2));
@@ -74,6 +85,10 @@
 
   .toast.closing {
     animation: toast-out var(--duration-base) var(--ease-out) forwards;
+  }
+
+  .toast.has-detail {
+    align-items: flex-start;
   }
 
   @keyframes toast-in {
@@ -124,14 +139,41 @@
   .toast[data-type="error"] .toast-icon   { background: var(--danger); color: var(--on-error); }
   .toast[data-type="info"] .toast-icon    { background: var(--info); }
 
-  .toast-message {
+  .toast-content {
     flex: 1;
+    min-width: 0;
+  }
+
+  .toast-message {
+    display: block;
     font-size: var(--text-base);
     font-weight: 500;
     line-height: var(--leading-base);
     color: var(--text);
     min-width: 0;
     overflow-wrap: anywhere;
+  }
+
+  .toast-detail {
+    display: block;
+    margin-top: var(--space-1);
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+    line-height: var(--leading-sm);
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+    user-select: text;
+    -webkit-user-select: text;
+  }
+
+  .toast-action {
+    margin-top: var(--space-2);
+    max-width: 100%;
+    height: auto;
+    min-height: var(--control-h);
+    padding-block: var(--space-1);
+    line-height: var(--leading-sm);
+    white-space: normal;
   }
 
   .toast-close {

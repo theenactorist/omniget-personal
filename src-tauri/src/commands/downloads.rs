@@ -58,6 +58,8 @@ pub fn validate_output_path(output_dir: String) -> PathLimitInfo {
 
 #[tauri::command]
 pub async fn detect_platform(url: String) -> Result<PlatformInfo, String> {
+    omniget_core::core::personal_policy::require_url(&url)?;
+
     let _timer_start = std::time::Instant::now();
     match Platform::from_url(&url) {
         Some(platform) => {
@@ -113,6 +115,8 @@ pub async fn detect_platform(url: String) -> Result<PlatformInfo, String> {
 #[cfg(not(target_os = "android"))]
 #[tauri::command]
 pub async fn get_media_formats(url: String) -> Result<Vec<FormatInfo>, String> {
+    omniget_core::core::personal_policy::require_url(&url)?;
+
     let _timer_start = std::time::Instant::now();
     let ytdlp_path = ytdlp::ensure_ytdlp()
         .await
@@ -133,6 +137,8 @@ pub async fn prefetch_media_info(
     state: tauri::State<'_, AppState>,
     url: String,
 ) -> Result<(), String> {
+    omniget_core::core::personal_policy::require_url(&url)?;
+
     let settings = config::load_settings(&app);
     crate::core::http_client::init_proxy(settings.proxy);
 
@@ -212,6 +218,8 @@ fn is_torrent_source(url: &str) -> bool {
 #[cfg(not(target_os = "android"))]
 #[tauri::command]
 pub async fn torrent_contents(url: String) -> Result<Vec<TorrentFileEntry>, String> {
+    omniget_core::core::personal_policy::require_url(&url)?;
+
     if !is_torrent_source(&url) {
         return Err("Not a torrent source".to_string());
     }
@@ -280,6 +288,8 @@ pub async fn metadata_fetch(
     url: String,
     output_dir: String,
 ) -> Result<MetadataFetchResult, String> {
+    omniget_core::core::personal_policy::require_url(&url)?;
+
     let ytdlp_path = ytdlp::find_ytdlp_cached()
         .await
         .ok_or_else(|| "yt-dlp unavailable".to_string())?;
@@ -317,8 +327,9 @@ pub async fn metadata_fetch(
     }
 
     if let Some(thumb) = json.get("thumbnail").and_then(|v| v.as_str()) {
-        if let Ok(client) =
-            crate::core::http_client::apply_global_proxy(reqwest::Client::builder()).build()
+        if let Ok(client) = crate::core::http_client::apply_global_proxy(reqwest::Client::builder())
+            .redirect(omniget_core::core::personal_policy::redirect_policy())
+            .build()
         {
             if let Ok(resp) = client.get(thumb).send().await {
                 if resp.status().is_success() {
@@ -352,6 +363,8 @@ pub struct ThumbnailListResult {
 #[cfg(not(target_os = "android"))]
 #[tauri::command]
 pub async fn thumbnails_list(url: String) -> Result<ThumbnailListResult, String> {
+    omniget_core::core::personal_policy::require_url(&url)?;
+
     let ytdlp_path = ytdlp::find_ytdlp_cached()
         .await
         .ok_or_else(|| "yt-dlp unavailable".to_string())?;
@@ -409,7 +422,10 @@ pub async fn thumbnail_save(
     output_dir: String,
     file_name: String,
 ) -> Result<String, String> {
+    omniget_core::core::personal_policy::require_url(&thumb_url)?;
+
     let client = crate::core::http_client::apply_global_proxy(reqwest::Client::builder())
+        .redirect(omniget_core::core::personal_policy::redirect_policy())
         .build()
         .map_err(|e| e.to_string())?;
     let resp = client
@@ -503,6 +519,8 @@ fn collect_sub_tracks(map: Option<&serde_json::Value>, auto: bool, out: &mut Vec
 #[cfg(not(target_os = "android"))]
 #[tauri::command]
 pub async fn subtitles_list(url: String) -> Result<SubtitleListResult, String> {
+    omniget_core::core::personal_policy::require_url(&url)?;
+
     let ytdlp_path = ytdlp::find_ytdlp_cached()
         .await
         .ok_or_else(|| "yt-dlp unavailable".to_string())?;
@@ -523,6 +541,8 @@ pub async fn subtitles_list(url: String) -> Result<SubtitleListResult, String> {
 
 #[cfg(not(target_os = "android"))]
 async fn fetch_text(client: &reqwest::Client, url: &str) -> Result<String, String> {
+    omniget_core::core::personal_policy::require_url(&url)?;
+
     let resp = client.get(url).send().await.map_err(|e| e.to_string())?;
     if !resp.status().is_success() {
         return Err(format!("HTTP {}", resp.status()));
@@ -551,7 +571,10 @@ pub async fn subtitles_save(
     output_dir: String,
     file_name: String,
 ) -> Result<String, String> {
+    omniget_core::core::personal_policy::require_url(&sub_url)?;
+
     let client = crate::core::http_client::apply_global_proxy(reqwest::Client::builder())
+        .redirect(omniget_core::core::personal_policy::redirect_policy())
         .build()
         .map_err(|e| e.to_string())?;
     let body = fetch_text(&client, &sub_url).await?;
@@ -575,7 +598,11 @@ pub async fn subtitles_merge(
     output_dir: String,
     file_name: String,
 ) -> Result<String, String> {
+    omniget_core::core::personal_policy::require_url(&primary_url)?;
+    omniget_core::core::personal_policy::require_url(&secondary_url)?;
+
     let client = crate::core::http_client::apply_global_proxy(reqwest::Client::builder())
+        .redirect(omniget_core::core::personal_policy::redirect_policy())
         .build()
         .map_err(|e| e.to_string())?;
     let primary = fetch_text(&client, &primary_url).await?;
@@ -622,6 +649,8 @@ pub async fn comments_fetch(
     max_comments: u32,
     sort: String,
 ) -> Result<CommentsResult, String> {
+    omniget_core::core::personal_policy::require_url(&url)?;
+
     let ytdlp_path = ytdlp::find_ytdlp_cached()
         .await
         .ok_or_else(|| "yt-dlp unavailable".to_string())?;
@@ -708,6 +737,8 @@ pub struct ChaptersResult {
 #[cfg(not(target_os = "android"))]
 #[tauri::command]
 pub async fn chapters_fetch(url: String) -> Result<ChaptersResult, String> {
+    omniget_core::core::personal_policy::require_url(&url)?;
+
     let ytdlp_path = ytdlp::find_ytdlp_cached()
         .await
         .ok_or_else(|| "yt-dlp unavailable".to_string())?;
@@ -766,6 +797,8 @@ pub struct LiveChatResult {
 #[cfg(not(target_os = "android"))]
 #[tauri::command]
 pub async fn livechat_fetch(url: String) -> Result<LiveChatResult, String> {
+    omniget_core::core::personal_policy::require_url(&url)?;
+
     let ytdlp_path = ytdlp::find_ytdlp_cached()
         .await
         .ok_or_else(|| "yt-dlp unavailable".to_string())?;
@@ -836,6 +869,8 @@ pub async fn livechat_fetch(url: String) -> Result<LiveChatResult, String> {
 #[cfg(not(target_os = "android"))]
 #[tauri::command]
 pub async fn playlist_entries(url: String) -> Result<Vec<PlaylistEntryInfo>, String> {
+    omniget_core::core::personal_policy::require_url(&url)?;
+
     let ytdlp_path = ytdlp::find_ytdlp_cached()
         .await
         .ok_or_else(|| "yt-dlp unavailable".to_string())?;
@@ -872,6 +907,8 @@ pub async fn download_from_url(
     scheduled_at: Option<u64>,
     stop_at: Option<u64>,
 ) -> Result<DownloadStarted, String> {
+    omniget_core::core::personal_policy::require_url(&url)?;
+
     let _timer_start = std::time::Instant::now();
     let platform = Platform::from_url(&url);
 
@@ -1036,6 +1073,8 @@ pub async fn download_with_custom_args(
     custom_args: Vec<String>,
     cookie_slug: Option<String>,
 ) -> Result<DownloadStarted, String> {
+    omniget_core::core::personal_policy::require_url(&url)?;
+
     if url.trim().is_empty() {
         return Err("URL is required".to_string());
     }
@@ -1539,42 +1578,87 @@ pub async fn clear_finished_downloads(
 }
 
 #[cfg(not(target_os = "android"))]
+fn resolve_saved_local_target(path: &str) -> Result<std::path::PathBuf, String> {
+    if path.trim().is_empty() {
+        return Err("No saved location was recorded for this download.".to_string());
+    }
+    let location_error = |error: std::io::Error| match error.kind() {
+        std::io::ErrorKind::NotFound => format!(
+            "The saved item is no longer at this location. It may have been moved or deleted: {}",
+            path
+        ),
+        std::io::ErrorKind::PermissionDenied => {
+            format!(
+                "Cannot access the saved location. Check its permissions: {}",
+                path
+            )
+        }
+        _ => format!("Could not access the saved location '{}': {}", path, error),
+    };
+    let target = std::fs::canonicalize(path).map_err(&location_error)?;
+    let metadata = std::fs::metadata(&target).map_err(location_error)?;
+    if !metadata.is_file() && !metadata.is_dir() {
+        return Err("The saved location is not a regular file or folder.".to_string());
+    }
+    Ok(target)
+}
+
+#[cfg(not(target_os = "android"))]
+fn check_reveal_output(output: std::process::Output, application: &str) -> Result<(), String> {
+    if output.status.success() {
+        return Ok(());
+    }
+    let detail: String = String::from_utf8_lossy(&output.stderr)
+        .trim()
+        .chars()
+        .take(400)
+        .collect();
+    if detail.is_empty() {
+        Err(format!(
+            "{} could not show the saved item ({}).",
+            application, output.status
+        ))
+    } else {
+        Err(format!(
+            "{} could not show the saved item: {}",
+            application, detail
+        ))
+    }
+}
+
+#[cfg(not(target_os = "android"))]
 #[tauri::command]
 pub async fn reveal_file(path: String) -> Result<(), String> {
+    let target = resolve_saved_local_target(&path)?;
+
     #[cfg(target_os = "windows")]
     {
         use std::os::windows::process::CommandExt;
         std::process::Command::new("explorer")
-            .raw_arg(format!("/select,\"{}\"", path))
+            .raw_arg(format!("/select,\"{}\"", target.display()))
             .spawn()
-            .map_err(|e| e.to_string())?;
+            .map_err(|e| format!("Could not open File Explorer to show the saved item: {}", e))?;
     }
 
     #[cfg(target_os = "macos")]
     {
-        std::process::Command::new("open")
-            .args(["-R", &path])
-            .spawn()
-            .map_err(|e| e.to_string())?;
+        let output = tokio::process::Command::new("/usr/bin/open")
+            .arg("-R")
+            .arg(&target)
+            .output()
+            .await
+            .map_err(|e| format!("Could not open Finder to show the saved item: {}", e))?;
+        check_reveal_output(output, "Finder")?;
     }
 
     #[cfg(target_os = "linux")]
     {
-        use std::path::{Path, PathBuf};
         use std::process::Stdio;
 
-        let file_path = Path::new(&path);
-        let abs_path: PathBuf = if file_path.is_absolute() {
-            file_path.to_path_buf()
-        } else {
-            std::env::current_dir()
-                .map(|cwd| cwd.join(file_path))
-                .unwrap_or_else(|_| file_path.to_path_buf())
-        };
+        let abs_path = target;
 
         let dir_path = abs_path.parent().unwrap_or(&abs_path);
         let item_uri = url::Url::from_file_path(&abs_path)
-            .or_else(|_| url::Url::from_file_path(file_path))
             .map(|u| u.to_string())
             .unwrap_or_else(|_| format!("file://{}", abs_path.display()));
         let dir_uri = url::Url::from_directory_path(dir_path)
@@ -1650,12 +1734,13 @@ pub async fn reveal_file(path: String) -> Result<(), String> {
                 .unwrap_or(false);
 
             if !portal_ok {
-                std::process::Command::new("xdg-open")
+                let output = tokio::process::Command::new("xdg-open")
                     .arg(dir_path)
                     .stdout(Stdio::null())
-                    .stderr(Stdio::null())
-                    .spawn()
-                    .map_err(|e| e.to_string())?;
+                    .output()
+                    .await
+                    .map_err(|e| format!("Could not open the file manager: {}", e))?;
+                check_reveal_output(output, "The file manager")?;
             }
         }
     }
@@ -1666,6 +1751,7 @@ pub async fn reveal_file(path: String) -> Result<(), String> {
 #[cfg(not(target_os = "android"))]
 #[tauri::command]
 pub async fn open_path_default(path: String) -> Result<(), String> {
+    omniget_core::core::personal_policy::require_url(&path)?;
     #[cfg(target_os = "windows")]
     {
         use std::os::windows::process::CommandExt;
@@ -1693,4 +1779,75 @@ pub async fn open_path_default(path: String) -> Result<(), String> {
     }
 
     Ok(())
+}
+
+#[cfg(all(test, not(target_os = "android")))]
+mod saved_location_tests {
+    use super::*;
+    use std::path::PathBuf;
+
+    fn test_directory() -> PathBuf {
+        let path =
+            std::env::temp_dir().join(format!("omniget-reveal-test-{}", uuid::Uuid::new_v4()));
+        std::fs::create_dir_all(&path).unwrap();
+        path
+    }
+
+    #[test]
+    fn saved_location_resolves_existing_file_without_changing_it() {
+        let root = test_directory();
+        let file = root.join("a saved reel.mp4");
+        std::fs::write(&file, b"saved file").unwrap();
+        let target = resolve_saved_local_target(file.to_str().unwrap()).unwrap();
+        assert!(target.is_absolute());
+        assert_eq!(target, std::fs::canonicalize(&file).unwrap());
+        assert_eq!(std::fs::read(&target).unwrap(), b"saved file");
+        std::fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn saved_location_accepts_a_torrent_or_multiple_file_folder() {
+        let root = test_directory();
+        let folder = root.join("saved collection");
+        std::fs::create_dir_all(&folder).unwrap();
+        let target = resolve_saved_local_target(folder.to_str().unwrap()).unwrap();
+        assert!(target.is_absolute());
+        assert!(target.is_dir());
+        assert_eq!(target, std::fs::canonicalize(folder).unwrap());
+        std::fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn saved_location_reports_missing_or_unrecorded_targets() {
+        let root = test_directory();
+        let missing = root.join("moved-reel.mp4");
+        let error = resolve_saved_local_target(missing.to_str().unwrap()).unwrap_err();
+        assert!(error.contains("moved or deleted"));
+        assert!(!missing.exists());
+        assert!(resolve_saved_local_target("")
+            .unwrap_err()
+            .contains("No saved location"));
+        assert!(resolve_saved_local_target("   ").is_err());
+        std::fs::remove_dir_all(root).unwrap();
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn saved_location_reports_file_manager_failure_instead_of_false_success() {
+        use std::os::unix::process::ExitStatusExt;
+        let failed = std::process::Output {
+            status: std::process::ExitStatus::from_raw(1 << 8),
+            stdout: Vec::new(),
+            stderr: b"Finder could not locate the item".to_vec(),
+        };
+        let error = check_reveal_output(failed, "Finder").unwrap_err();
+        assert!(error.contains("Finder could not show the saved item"));
+        assert!(error.contains("could not locate the item"));
+        let success = std::process::Output {
+            status: std::process::ExitStatus::from_raw(0),
+            stdout: Vec::new(),
+            stderr: Vec::new(),
+        };
+        assert!(check_reveal_output(success, "Finder").is_ok());
+    }
 }

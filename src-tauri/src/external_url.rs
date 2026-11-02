@@ -46,6 +46,9 @@ pub fn is_external_url(value: &str) -> bool {
 
     let normalized = normalize_external_url(trimmed);
     let target: &str = normalized.as_deref().unwrap_or(trimmed);
+    if !omniget_core::core::personal_policy::url_enabled(target) {
+        return false;
+    }
 
     if target.starts_with("magnet:") || target.starts_with("p2p:") {
         return true;
@@ -97,6 +100,8 @@ pub async fn queue_url_with_defaults(
     from_hotkey: bool,
     download_mode: Option<String>,
 ) -> Result<QueueUrlOutcome, String> {
+    omniget_core::core::personal_policy::require_url(&url)?;
+
     let state = app.state::<AppState>();
     let settings = config::load_settings(app);
     let download_queue = state.download_queue.clone();

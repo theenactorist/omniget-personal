@@ -10,5 +10,5 @@ export async function checkForUpdate(): Promise<UpdateInfo> {
 }
 
 export async function installUpdate(): Promise<void> {
-  throw new Error("Update OmniGet Personal by rebuilding your reviewed local source.");
+  throw new Error("Update Origo Downloads by rebuilding your reviewed local source.");
 }

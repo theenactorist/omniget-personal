@@ -18,7 +18,6 @@ pub fn update_settings(app: tauri::AppHandle, partial: String) -> Result<AppSett
     let old_music_hotkey_binding = current.download.music_hotkey_binding.clone();
     let old_ptt_key = current.omnidisc.voice.ptt_key.clone();
     let old_start_with_system = current.start_with_system;
-    let old_rpc = current.rpc.clone();
 
     let patch: serde_json::Value =
         serde_json::from_str(&partial).map_err(|e| format!("Invalid JSON: {}", e))?;
@@ -26,6 +25,7 @@ pub fn update_settings(app: tauri::AppHandle, partial: String) -> Result<AppSett
         serde_json::to_value(&current).map_err(|e| format!("Serialize: {}", e))?;
     merge_json(&mut current_val, &patch);
     current = serde_json::from_value(current_val).map_err(|e| format!("Deserialize: {}", e))?;
+    current = omniget_core::core::personal_policy::normalize_settings(current);
     config::save_settings(&app, &current).map_err(|e| format!("Save: {}", e))?;
 
     crate::core::http_client::init_proxy(current.proxy.clone());
@@ -48,23 +48,12 @@ pub fn update_settings(app: tauri::AppHandle, partial: String) -> Result<AppSett
         crate::commands::autostart::apply_autostart(&app, current.start_with_system)?;
     }
 
-    if old_rpc.enabled != current.rpc.enabled
-        || old_rpc.app_id != current.rpc.app_id
-        || old_rpc.large_image_key != current.rpc.large_image_key
-    {
-        let new_rpc = current.rpc.clone();
-        let prev_app_id = old_rpc.app_id.clone();
-        tauri::async_runtime::spawn(async move {
-            crate::core::rpc::handle_settings_changed(new_rpc, prev_app_id).await;
-        });
-    }
-
     Ok(current)
 }
 
 #[tauri::command]
 pub fn reset_settings(app: tauri::AppHandle) -> Result<AppSettings, String> {
-    let defaults = AppSettings::default();
+    let defaults = omniget_core::core::personal_policy::normalize_settings(AppSettings::default());
     config::save_settings(&app, &defaults).map_err(|e| format!("Save: {}", e))?;
     hotkey::reregister(&app);
     let _ = crate::commands::autostart::apply_autostart(&app, defaults.start_with_system);
